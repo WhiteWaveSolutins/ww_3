@@ -99,11 +99,14 @@ class _SettingsViewState extends State<SplashScreen>
 class AppLogo extends StatelessWidget {
   const AppLogo({
     super.key,
+    this.mainAxisAlignment = MainAxisAlignment.start,
   });
+  final MainAxisAlignment? mainAxisAlignment;
 
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisAlignment: mainAxisAlignment!,
       children: [SvgPicture.asset(sMic), const Text('Voice Translate')],
     );
   }

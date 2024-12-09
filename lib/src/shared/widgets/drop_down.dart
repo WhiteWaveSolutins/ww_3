@@ -1,7 +1,6 @@
 import 'package:ai_translator/src/shared/utils/size_utils.dart';
 import 'package:ai_translator/src/shared/utils/text_theme.dart';
 import 'package:ai_translator/src/shared/utils/theme.dart';
-import 'package:ai_translator/src/shared/widgets/textfields.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -12,10 +11,10 @@ class AppDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return VerticalPadding(
-        child: Divider(
-      color: context.outline.withOpacity(0.2),
-    ));
+    return Divider(
+      color: context.onSurface.withOpacity(0.2),
+      thickness: 0.3,
+    );
   }
 }
 

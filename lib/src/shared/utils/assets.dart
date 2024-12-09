@@ -24,6 +24,8 @@ final String sPay = 'pay'.svg;
 final String sPlay = 'play'.svg;
 final String sSwap = 'swap'.svg;
 final String sUsa = 'usa'.svg;
+final String sArrowRight = 'arrow_right'.svg;
+final String sMore = 'more'.svg;
 
 //pngs
 final String sLogoPng = 'logo'.png;

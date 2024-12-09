@@ -2,6 +2,7 @@ import 'package:ai_translator/src/features/main/ui/main.dart';
 import 'package:ai_translator/src/features/onboarding/onboarding/onboarding.dart';
 import 'package:ai_translator/src/features/onboarding/splash/splash.dart';
 import 'package:ai_translator/src/features/settings/ui/settings.dart';
+import 'package:ai_translator/src/features/terms/privacy_policy.dart';
 import 'package:ai_translator/src/service-locators/settings/settings.dart';
 import 'package:ai_translator/src/shared/utils/size_utils.dart';
 import 'package:ai_translator/src/shared/utils/theme.dart';
@@ -77,6 +78,8 @@ MaterialPageRoute<void> routeConfig(RouteSettings routeSettings) {
           return const MainScreen();
         case TranslatorSettingsScreen.routeName:
           return const TranslatorSettingsScreen();
+        case PrivacyPolicyScreen.routeName:
+          return const PrivacyPolicyScreen();
         default:
           return const SplashScreen();
       }

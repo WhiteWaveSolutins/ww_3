@@ -140,7 +140,7 @@ extension FastColor on BuildContext {
 
   Color get surface => CupertinoColors.activeBlue;
 
-  Color get onSurface => CupertinoColors.activeBlue;
+  Color get onSurface => kSecondaryFade1;
 
   Color get surfaceTint => CupertinoColors.activeBlue;
 
