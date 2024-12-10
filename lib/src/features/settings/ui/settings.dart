@@ -36,10 +36,6 @@ class _SettingsViewState extends State<TranslatorSettingsScreen> {
           'Settings',
           style: context.displayLarge,
         ),
-        trailing: CupertinoButton(
-            padding: EdgeInsets.zero,
-            onPressed: () {},
-            child: const Icon(CupertinoIcons.settings)),
       ),
       body: HorizontalPadding(
         child: Column(
@@ -177,7 +173,9 @@ class _SettingsViewState extends State<TranslatorSettingsScreen> {
 class AppbackButton extends StatelessWidget {
   const AppbackButton({
     super.key,
+    this.color,
   });
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {

@@ -1,4 +1,6 @@
 //
+import 'package:ai_translator/src/features/main/ui/main.dart';
+
 const kInternetConnectionError = 'No internet connection, try again.';
 const kTimeOutError = 'Please check your internet conenction.';
 const kServerError = 'Something went wrong, try again.';
@@ -51,3 +53,32 @@ Here is where you can list and ban behaviors and activities like:
 - Stalking other users
 
 If your website or app gives users a lot of control and freedom while using your services, consider putting multiple use clauses within your terms of use.  ''';
+
+final historyItems = [
+  HistoryItem(
+      countries: ['usa', 'france'],
+      word: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit...',
+      translation: 'a very long translated text'),
+  HistoryItem(
+      countries: ['usa', 'france'],
+      word: 'a very long text',
+      translation:
+          'Lorem ipsum dolor sit amet, consectetuer adipiscing elit...'),
+  HistoryItem(
+      countries: ['usa', 'france'],
+      word:
+          'Lorem ipsum dolor sit amet, consectetuer adipiscing elit, Lorem ipsum dolor sit amet, consectetuer adipiscing elit..., Lorem ipsum dolor sit amet, consectetuer adipiscing elit...',
+      translation: 'a very long translated text'),
+  HistoryItem(
+      countries: ['usa', 'france'],
+      word: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit...',
+      translation: 'a very long translated text'),
+  HistoryItem(
+      countries: ['usa', 'france'],
+      word: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit...',
+      translation: 'a very long translated text'),
+  HistoryItem(
+      countries: ['usa', 'france'],
+      word: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit...',
+      translation: 'a very long translated text'),
+];

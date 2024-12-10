@@ -26,10 +26,13 @@ final String sSwap = 'swap'.svg;
 final String sUsa = 'usa'.svg;
 final String sArrowRight = 'arrow_right'.svg;
 final String sMore = 'more'.svg;
+final String sCopy = 'copy'.svg;
+final String sCopy1 = 'ellipse_copy'.svg;
 
 //pngs
 final String sLogoPng = 'logo'.png;
 final String sFlutterLogoPng = 'flutter_logo'.png;
+final String sPlaceholderPng = 'placeholder'.png;
 
 extension ImageExtension on String {
   // png paths
