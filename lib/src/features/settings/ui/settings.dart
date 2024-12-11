@@ -1,3 +1,5 @@
+import 'package:ai_translator/src/features/authentication/logic/authentication_viewmodel.dart';
+import 'package:ai_translator/src/features/onboarding/onboarding/onboarding.dart';
 import 'package:ai_translator/src/features/onboarding/splash/splash.dart';
 import 'package:ai_translator/src/features/terms/privacy_policy.dart';
 import 'package:ai_translator/src/shared/utils/assets.dart';
@@ -9,6 +11,7 @@ import 'package:ai_translator/src/shared/widgets/scaffold.dart';
 import 'package:ai_translator/src/shared/widgets/textfields.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 
 class TranslatorSettingsScreen extends StatefulWidget {
   const TranslatorSettingsScreen({super.key});
@@ -29,144 +32,162 @@ class _SettingsViewState extends State<TranslatorSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return TranslatorScaffold(
-      appBar: CupertinoNavigationBar(
-        leading: const AppbackButton(),
-        middle: Text(
-          'Settings',
-          style: context.displayLarge,
+    return Consumer<AuthenticationViewModel>(
+      builder: (context, value, child) => TranslatorScaffold(
+        appBar: CupertinoNavigationBar(
+          leading: const AppbackButton(),
+          middle: Text(
+            'Settings',
+            style: context.displayLarge,
+          ),
+          trailing: CupertinoButton(
+              padding: EdgeInsets.only(bottom: smallVerticalPadding),
+              child: const Icon(CupertinoIcons.square_arrow_left),
+              onPressed: () async {
+                await value.logout();
+                goToLogin();
+              }),
         ),
-      ),
-      body: HorizontalPadding(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  height: kAppsize(context).height * 0.1,
-                  margin: EdgeInsets.only(top: verticalPadding),
-                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(bigBorderRadius),
-                      gradient: kPrimaryGradient),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Get free trial for a week',
-                        style: context.bodyLarge
-                            .copyWith(color: kTextColorDarkMode),
-                      ),
-                      CupertinoButton(
-                          child: Container(
-                            padding: const EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                                color: kTextColorDarkMode,
-                                borderRadius: BorderRadius.circular(15.fSize)),
-                            child: Text(
-                              'Upgrade',
-                              style: context.bodyMedium
-                                  .copyWith(color: kPrimaryColor1),
-                            ),
-                          ),
-                          onPressed: () {})
-                    ],
-                  ),
-                ),
-                const VerticalPadding(
-                  child: Text(
-                    'About App',
-                  ),
-                ),
-                VerticalPadding(
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: horizontalPadding, vertical: 5.h),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(bigBorderRadius),
-                        color: kSecondaryFade1.withOpacity(0.05)),
-                    child: SettingsText(
-                      text: 'Privacy Policy and terms of use',
-                      onTap: () {
-                        Navigator.restorablePushNamed(
-                            context, PrivacyPolicyScreen.routeName);
-                      },
-                    ),
-                  ),
-                ),
-                const VerticalPadding(
-                  child: Text(
-                    'The Main Ones',
-                  ),
-                ),
-                VerticalPadding(
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: horizontalPadding,
-                        vertical: verticalPadding),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(bigBorderRadius),
-                        color: kSecondaryFade1.withOpacity(0.05)),
-                    child: const Column(
-                      children: [
-                        SettingsText(
-                          text: 'Version',
-                          hasDivider: true,
-                        ),
-                        SettingsText(
-                          text: 'Support',
-                          hasDivider: true,
-                        ),
-                        SettingsText(
-                          text: 'Share App',
-                          hasDivider: true,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                VerticalPadding(
-                  child: Container(
-                    padding: EdgeInsets.all(1.h),
+        isLoading: value.isLoading,
+        body: HorizontalPadding(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    height: kAppsize(context).height * 0.1,
+                    margin: EdgeInsets.only(top: verticalPadding),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: horizontalPadding),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(bigBorderRadius),
                         gradient: kPrimaryGradient),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Get free trial for a week',
+                          style: context.bodyLarge
+                              .copyWith(color: kTextColorDarkMode),
+                        ),
+                        CupertinoButton(
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                  color: kTextColorDarkMode,
+                                  borderRadius:
+                                      BorderRadius.circular(15.fSize)),
+                              child: Text(
+                                'Upgrade',
+                                style: context.bodyMedium
+                                    .copyWith(color: kPrimaryColor1),
+                              ),
+                            ),
+                            onPressed: () {})
+                      ],
+                    ),
+                  ),
+                  const VerticalPadding(
+                    child: Text(
+                      'About App',
+                    ),
+                  ),
+                  VerticalPadding(
                     child: Container(
                       padding: EdgeInsets.symmetric(
-                          horizontal: horizontalPadding, vertical: textSize),
+                          horizontal: horizontalPadding, vertical: 5.h),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(bigBorderRadius),
-                          color: kBackgroundColor),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          color: kSecondaryFade1.withOpacity(0.05)),
+                      child: SettingsText(
+                        text: 'Privacy Policy and terms of use',
+                        onTap: () {
+                          Navigator.restorablePushNamed(
+                              context, PrivacyPolicyScreen.routeName);
+                        },
+                      ),
+                    ),
+                  ),
+                  const VerticalPadding(
+                    child: Text(
+                      'The Main Ones',
+                    ),
+                  ),
+                  VerticalPadding(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: horizontalPadding,
+                          vertical: verticalPadding),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(bigBorderRadius),
+                          color: kSecondaryFade1.withOpacity(0.05)),
+                      child: const Column(
                         children: [
-                          const Text(
-                            'Remove History Every Month',
+                          SettingsText(
+                            text: 'Version',
+                            hasDivider: true,
                           ),
-                          CupertinoSwitch(
-                              value: isSwitched,
-                              thumbColor: kPrimaryColor1,
-                              onChanged: (s) {
-                                isSwitched = s;
-                                setState(() {});
-                              })
+                          SettingsText(
+                            text: 'Support',
+                            hasDivider: true,
+                          ),
+                          SettingsText(
+                            text: 'Share App',
+                            hasDivider: true,
+                          ),
                         ],
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            const AppLogo(
-              mainAxisAlignment: MainAxisAlignment.center,
-            )
-          ],
+                  VerticalPadding(
+                    child: Container(
+                      padding: EdgeInsets.all(1.h),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(bigBorderRadius),
+                          gradient: kPrimaryGradient),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: horizontalPadding, vertical: textSize),
+                        decoration: BoxDecoration(
+                            borderRadius:
+                                BorderRadius.circular(bigBorderRadius),
+                            color: kBackgroundColor),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Remove History Every Month',
+                            ),
+                            CupertinoSwitch(
+                                value: isSwitched,
+                                thumbColor: kPrimaryColor1,
+                                onChanged: (s) {
+                                  isSwitched = s;
+                                  setState(() {});
+                                })
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const AppLogo(
+                mainAxisAlignment: MainAxisAlignment.center,
+              )
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  void goToLogin() {
+    Navigator.pushNamedAndRemoveUntil(
+        context, OnboardingScreen.routeName, (e) => false);
   }
 }
 

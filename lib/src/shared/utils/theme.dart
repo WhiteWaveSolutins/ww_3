@@ -60,6 +60,8 @@ CupertinoThemeData translatorLightTheme = CupertinoThemeData(
 const kPrimaryColor1 = Color(0xffDDFC53);
 const kPrimaryColor2 = Color(0xff7FDF76);
 
+final kBottomSheetColor = const Color(0xff39397B).withOpacity(0.9);
+
 const kPrimaryGradient = LinearGradient(colors: [
   kPrimaryColor2,
   kPrimaryColor1,

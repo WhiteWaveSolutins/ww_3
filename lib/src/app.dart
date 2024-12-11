@@ -1,3 +1,4 @@
+import 'package:ai_translator/src/features/authentication/logic/user_provider.dart';
 import 'package:ai_translator/src/features/main/ui/history.dart';
 import 'package:ai_translator/src/features/main/ui/main.dart';
 import 'package:ai_translator/src/features/onboarding/onboarding/onboarding.dart';
@@ -13,6 +14,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:provider/provider.dart';
 
 /// The Widget that configures your application.
 class MyApp extends StatelessWidget {
@@ -59,7 +61,7 @@ class MyApp extends StatelessWidget {
             //   );
             // },
             onGenerateRoute: (RouteSettings routeSettings) {
-              return routeConfig(routeSettings);
+              return routeConfig(routeSettings, context);
             },
           );
         },
@@ -68,11 +70,18 @@ class MyApp extends StatelessWidget {
   }
 }
 
-MaterialPageRoute<void> routeConfig(RouteSettings routeSettings) {
+MaterialPageRoute<void> routeConfig(
+    RouteSettings routeSettings, BuildContext context) {
+  String routeName = routeSettings.name!;
+  final userStateProv = context.read<UserStateProvider>();
+  if (routeSettings.name == SplashScreen.routeName &&
+      userStateProv.authStatus == UserAuthStatus.authenticated) {
+    routeName = MainScreen.routeName;
+  }
   return MaterialPageRoute<void>(
     settings: routeSettings,
     builder: (BuildContext context) {
-      switch (routeSettings.name) {
+      switch (routeName) {
         case SplashScreen.routeName:
           return const SplashScreen();
         case OnboardingScreen.routeName:

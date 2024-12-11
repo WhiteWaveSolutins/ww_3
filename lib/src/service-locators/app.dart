@@ -1,6 +1,9 @@
 import 'package:ai_translator/src/core/network/network.dart';
 import 'package:ai_translator/src/routes/observer/observer.dart';
+import 'package:ai_translator/src/service-locators/authentication.dart';
+import 'package:ai_translator/src/service-locators/history/history.dart';
 import 'package:ai_translator/src/service-locators/settings/settings.dart';
+import 'package:ai_translator/src/service-locators/translate/translate.dart';
 import 'package:ai_translator/src/services/app/token.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,7 +22,9 @@ class AppServiceLocator {
     serviceLocator
         .registerLazySingleton<UserStateRepo>(() => UserStateRepoImpl());
     serviceLocator.registerLazySingleton<ApiClient>(() => ApiClient());
+    await AuthenticationServiceLocator.initialize();
     await SettingsServiceLocator.initialize();
-    // await AuthServiceLocator.initialize();
+    await TransaltorServiceLocator.initialize();
+    await HistoryServiceLocator.initialize();
   }
 }

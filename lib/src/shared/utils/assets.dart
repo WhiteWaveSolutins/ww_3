@@ -28,6 +28,7 @@ final String sArrowRight = 'arrow_right'.svg;
 final String sMore = 'more'.svg;
 final String sCopy = 'copy'.svg;
 final String sCopy1 = 'ellipse_copy'.svg;
+final String sRecordBackground = 'record_background'.svg;
 
 //pngs
 final String sLogoPng = 'logo'.png;

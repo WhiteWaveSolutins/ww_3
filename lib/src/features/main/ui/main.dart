@@ -1,17 +1,23 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:ai_translator/src/features/main/logic/history_viewmodel.dart';
+import 'package:ai_translator/src/features/main/logic/model.dart';
 import 'package:ai_translator/src/features/main/ui/history.dart';
 import 'package:ai_translator/src/features/settings/ui/settings.dart';
+import 'package:ai_translator/src/features/translate/logic/viewmodel.dart';
 import 'package:ai_translator/src/features/translate/ui/camera.dart';
 import 'package:ai_translator/src/features/translate/ui/record.dart';
 import 'package:ai_translator/src/shared/utils/assets.dart';
 import 'package:ai_translator/src/shared/utils/size_utils.dart';
-import 'package:ai_translator/src/shared/utils/strings.dart';
 import 'package:ai_translator/src/shared/utils/text_theme.dart';
 import 'package:ai_translator/src/shared/utils/theme.dart';
+import 'package:ai_translator/src/shared/widgets/animated_column_and_row.dart';
 import 'package:ai_translator/src/shared/widgets/drop_down.dart';
 import 'package:ai_translator/src/shared/widgets/scaffold.dart';
 import 'package:ai_translator/src/shared/widgets/textfields.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -25,140 +31,217 @@ class MainScreen extends StatefulWidget {
 class _SettingsViewState extends State<MainScreen> {
   @override
   void initState() {
+    context.read<RecordingViewModel>().initializeSpeech();
+    context.read<HistoryViewmodel>().getHistoryItem();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    if (!mounted) {
+      context.read<RecordingViewModel>().textEditingController.dispose();
+      context.read<RecordingViewModel>().disposeValues();
+    }
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return TranslatorScaffold(
       appBar: CupertinoNavigationBar(
-        leading: Text(
-          'Welcome Back!',
-          style: context.displayLarge,
+        leading: Padding(
+          padding: EdgeInsets.only(top: smallVerticalPadding),
+          child: Text(
+            'Welcome Back!',
+            style: context.displayLarge,
+          ),
         ),
-        trailing: const SettingsButton(),
+        trailing: Padding(
+          padding: EdgeInsets.only(bottom: smallVerticalPadding),
+          child: const SettingsButton(),
+        ),
       ),
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-            child: Column(
-              children: [
-                Container(
-                  height: kAppsize(context).height * 0.3,
-                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(bigBorderRadius),
-                      color: kSecondaryFade1.withOpacity(0.05)),
-                  child: Stack(
-                    children: [
-                      Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              MainActionButton(language: "English", icon: sUsa),
-                              SvgPicture.asset(sSwap),
-                              MainActionButton(
-                                  language: "French", icon: sFrance),
-                            ],
-                          ),
-                          CupertinoTextField(
-                            placeholder: 'Enter the Text...',
-                            placeholderStyle: context.bodyLarge,
-                            decoration: const BoxDecoration(border: Border()),
-                          ),
-                        ],
-                      ),
-                      Positioned(
-                          bottom: 0, right: 0, child: SvgPicture.asset(sPlay))
-                    ],
-                  ),
+      body: Consumer<RecordingViewModel>(
+        builder: (context, value, child) => Stack(
+          fit: StackFit.expand,
+          children: [
+            if (value.historyItems.isEmpty)
+              Positioned(
+                bottom: 0,
+                child: Center(
+                  child: SvgPicture.asset(sMain),
                 ),
-                VerticalPadding(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      MainActionButton(
-                        language: "Voice",
-                        onPressed: () {
-                          Navigator.restorablePushNamed(
-                              context, RecordingScreen.routeName);
-                        },
-                        icon: sMic,
-                      ),
-                      MainActionButton(
-                        language: "Camera",
-                        onPressed: () {
-                          Navigator.restorablePushNamed(
-                              context, CameraScreen.routeName);
-                        },
-                        icon: sCamera,
-                      ),
-                    ],
-                  ),
-                ),
-                VerticalPadding(
-                    child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'History',
-                      style: context.displayLarge,
-                    ),
-                    CupertinoButton(
-                      padding: EdgeInsets.zero,
-                      onPressed: () {
-                        Navigator.restorablePushNamed(
-                            context, HistoryScreen.routeName);
-                      },
-                      child: Text(
-                        'See All',
-                        style: context.bodyMedium,
-                      ),
-                    ),
-                  ],
-                )),
-                if (historyItems.isNotEmpty)
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        width: kAppsize(context).width * 0.55,
-                        child: Column(
+              ),
+            SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+              child: TranslatorAnimatedColumn(
+                children: [
+                  Container(
+                    height: value.isActive
+                        ? kAppsize(context).height * 0.7
+                        : kAppsize(context).height * 0.3,
+                    padding:
+                        EdgeInsets.symmetric(horizontal: horizontalPadding),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(bigBorderRadius),
+                        color: kSecondaryFade1.withOpacity(0.05)),
+                    child: Stack(
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            HistoryWidget(
-                              historyItem: historyItems[0],
+                            const SwapWidget(
+                              hPadding: 0,
+                              vPadding: 0,
                             ),
-                            HistoryWidget(
-                              historyItem: historyItems[1],
+                            CupertinoTextField(
+                              placeholder: 'Enter the Text...',
+                              controller: value.textEditingController,
+                              placeholderStyle: context.bodyLarge,
+                              maxLines: value.isActive ? 6 : 1,
+                              onEditingComplete: () {
+                                value.translateText(
+                                    isSpeaking: false, canSave: true);
+                              },
+                              onChanged: (s) {
+                                if (s.length > 2) {
+                                  value.isActive = true;
+                                  value.onTextChanged(s, (finalText) {
+                                    value.translateText(
+                                        isSpeaking: false,
+                                        canSave: s.length > 40);
+                                  });
+                                }
+                              },
+                              decoration: const BoxDecoration(border: Border()),
                             ),
+                            if (value.isActive)
+                              Stack(
+                                children: [
+                                  VerticalPadding(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const AppDivider(),
+                                        if (value.translatedText.isNotEmpty)
+                                          VerticalPadding(
+                                              child: FadingTextWidget(
+                                                  text: value.translatedText))
+                                      ],
+                                    ),
+                                  ),
+                                  if (value.isTranslating)
+                                    const Center(
+                                        child: CircularProgressIndicator())
+                                ],
+                              )
                           ],
                         ),
+                        Positioned(
+                            bottom: verticalPadding,
+                            right: 0,
+                            child: Row(
+                              children: [
+                                ActionButton(
+                                  icon: CupertinoIcons.restart,
+                                  onPressed: () {
+                                    value.resetTranslation();
+                                    value.isActive = false;
+                                  },
+                                ),
+                                ActionButton(
+                                    icon: CupertinoIcons.play_fill,
+                                    onPressed: () async {
+                                      await value.playTranslatedText();
+                                    }),
+                              ],
+                            ))
+                      ],
+                    ),
+                  ),
+                  VerticalPadding(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        MainActionButton(
+                          language: "Voice",
+                          onPressed: () {
+                            value.resetTranslation();
+                            Navigator.restorablePushNamed(
+                                context, RecordingScreen.routeName);
+                          },
+                          iconWidget: SvgPicture.asset(sMic),
+                        ),
+                        MainActionButton(
+                          language: "Camera",
+                          onPressed: () {
+                            value.resetTranslation();
+                            Navigator.restorablePushNamed(
+                                context, CameraScreen.routeName);
+                          },
+                          iconWidget: SvgPicture.asset(sCamera),
+                        ),
+                      ],
+                    ),
+                  ),
+                  VerticalPadding(
+                      child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'History',
+                        style: context.displayLarge,
                       ),
-                      SizedBox(
-                        width: horizontalPadding,
-                      ),
-                      Expanded(
-                        child: HistoryWidget(
-                          historyItem: historyItems[2],
+                      CupertinoButton(
+                        padding: EdgeInsets.zero,
+                        onPressed: () {
+                          value.resetTranslation();
+                          Navigator.restorablePushNamed(
+                              context, HistoryScreen.routeName);
+                        },
+                        child: Text(
+                          'See All',
+                          style: context.bodyMedium,
                         ),
                       ),
                     ],
-                  ),
-              ],
-            ),
-          ),
-          if (historyItems.isEmpty)
-            Positioned(
-              bottom: 0,
-              child: Center(
-                child: SvgPicture.asset(sMain),
+                  )),
+                  if (value.historyItems.isNotEmpty)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: kAppsize(context).width * 0.55,
+                          child: Column(
+                            children: [
+                              HistoryWidget(
+                                historyItem: value.historyItems[0],
+                              ),
+                              if (value.historyItems.length > 1)
+                                HistoryWidget(
+                                  historyItem: value.historyItems[1],
+                                ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          width: horizontalPadding,
+                        ),
+                        if (value.historyItems.length > 2)
+                          Expanded(
+                            child: HistoryWidget(
+                              historyItem: value.historyItems[2],
+                            ),
+                          ),
+                      ],
+                    ),
+                ],
               ),
-            )
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -193,56 +276,76 @@ class HistoryWidget extends StatelessWidget {
   final bool? isHistory;
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(bottom: verticalPadding),
-      padding: EdgeInsets.symmetric(
-          horizontal: horizontalPadding, vertical: verticalPadding),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(bigBorderRadius),
-          color: kSecondaryFade1.withOpacity(0.05)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Align(
-            alignment: Alignment.topRight,
-            child: SizedBox(
-              height: 20.h,
-              child: CupertinoButton(
-                onPressed: () {
-                  showMenu(context);
-                },
-                padding: EdgeInsets.zero,
-                child: SvgPicture.asset(sMore),
+    return Consumer<RecordingViewModel>(
+      builder: (context, value, child) => Container(
+        margin: EdgeInsets.only(bottom: verticalPadding),
+        padding: EdgeInsets.symmetric(
+            horizontal: horizontalPadding, vertical: verticalPadding),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(bigBorderRadius),
+            color: kSecondaryFade1.withOpacity(0.05)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Align(
+              alignment: Alignment.topRight,
+              child: SizedBox(
+                height: 20.h,
+                child: CupertinoButton(
+                  onPressed: () {
+                    showMenu(context);
+                  },
+                  padding: EdgeInsets.zero,
+                  child: SvgPicture.asset(sMore),
+                ),
               ),
             ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (!isHistory!)
-                Stack(
-                  children: [
-                    SvgPicture.asset(sUsa),
-                    HorizontalPadding(child: SvgPicture.asset(sFrance))
-                  ],
-                ),
-              if (isHistory!) SvgPicture.asset(sUsa),
-              Text(historyItem.word),
-              if (isHistory!)
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    VerticalPadding(
-                        child: AppDivider(
-                      color: kTabFade1.withOpacity(0.3),
-                    )),
-                    SvgPicture.asset(sUsa),
-                    Text(historyItem.translation),
-                  ],
-                ),
-            ],
-          ),
-        ],
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (!isHistory!)
+                  Row(
+                    children: [
+                      Text(
+                        value.inputLang['flag']!,
+                        style: context.displayLarge,
+                      ),
+                      HorizontalPadding(
+                        child: Text(
+                          value.outputLang['flag']!,
+                          style: context.displayLarge,
+                        ),
+                      )
+                    ],
+                  ),
+                const VerticalSpacer(),
+                if (isHistory!)
+                  Text(
+                    value.inputLang['flag']!,
+                    style: context.displayLarge,
+                  ),
+                const VerticalSpacer(),
+                Text(historyItem.word),
+                if (isHistory!)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      VerticalPadding(
+                          child: AppDivider(
+                        color: kTabFade1.withOpacity(0.3),
+                      )),
+                      Text(
+                        value.outputLang['flag']!,
+                        style: context.displayLarge,
+                      ),
+                      const VerticalSpacer(),
+                      Text(historyItem.translation),
+                    ],
+                  ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -373,11 +476,7 @@ class MainActionButton extends StatelessWidget {
             color: kSecondaryFade1.withOpacity(0.05)),
         child: Row(
           children: [
-            iconWidget == null
-                ? SvgPicture.asset(
-                    icon!,
-                  )
-                : iconWidget!,
+            iconWidget == null ? Text(icon!) : iconWidget!,
             HorizontalPadding(
               child: Text(
                 language,
@@ -389,13 +488,4 @@ class MainActionButton extends StatelessWidget {
       ),
     );
   }
-}
-
-class HistoryItem {
-  final List<String> countries;
-  final String word;
-  final String translation;
-
-  HistoryItem(
-      {required this.countries, required this.word, required this.translation});
 }

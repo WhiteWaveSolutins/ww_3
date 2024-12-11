@@ -1,7 +1,9 @@
 import 'package:ai_translator/src/service-locators/app.dart';
 import 'package:ai_translator/src/service-locators/settings/settings.dart';
+import 'package:ai_translator/src/shared/utils/app_providers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 import 'src/app.dart';
 
@@ -15,7 +17,7 @@ Future<void> main() async {
     ]),
   ]).then((value) {
     runApp(
-      const MyApp(),
+      MultiProvider(providers: [...appProviders], child: const MyApp()),
     );
   });
 }

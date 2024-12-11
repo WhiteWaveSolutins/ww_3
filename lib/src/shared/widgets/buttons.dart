@@ -49,8 +49,12 @@ class AppFabButton extends StatelessWidget {
   const AppFabButton({
     super.key,
     this.onPressed,
+    this.icon,
+    this.iconColor,
   });
   final void Function()? onPressed;
+  final IconData? icon;
+  final Color? iconColor;
 
   @override
   Widget build(BuildContext context) {
@@ -65,8 +69,8 @@ class AppFabButton extends StatelessWidget {
           shape: BoxShape.circle,
         ),
         child: Icon(
-          CupertinoIcons.arrow_right,
-          color: context.onBackground,
+          icon ?? CupertinoIcons.arrow_right,
+          color: iconColor ?? context.onBackground,
         ),
       ),
     );

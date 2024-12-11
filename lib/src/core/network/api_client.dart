@@ -6,6 +6,7 @@ import 'package:ai_translator/src/service-locators/app.dart';
 import 'package:ai_translator/src/shared/utils/strings.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:ai_translator/src/api_key.dart';
 
 class ApiClient {
   ApiClient() {
@@ -49,7 +50,7 @@ class ApiClient {
   void setAuthCookie() {
     final token = getToken();
     if (token != null) {
-      _dio!.options.headers['Authorization'] = "Bearer $token";
+      _dio!.options.headers['Authorization'] = "Bearer $kApiKey";
     }
   }
 
