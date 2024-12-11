@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:ai_translator/src/features/main/logic/history_viewmodel.dart';
 import 'package:ai_translator/src/features/main/logic/model.dart';
 import 'package:ai_translator/src/features/main/ui/history.dart';
@@ -16,6 +15,7 @@ import 'package:ai_translator/src/shared/widgets/scaffold.dart';
 import 'package:ai_translator/src/shared/widgets/textfields.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
@@ -65,20 +65,25 @@ class _SettingsViewState extends State<MainScreen> {
         builder: (context, value, child) => Stack(
           fit: StackFit.expand,
           children: [
-            if (value.historyItems.isEmpty)
-              Positioned(
-                bottom: 0,
-                child: Center(
-                  child: SvgPicture.asset(sMain),
+            if (context
+                .read<HistoryViewmodel>()
+                .historyItemList
+                .histories
+                .isEmpty)
+              if (!value.isActive)
+                Positioned(
+                  bottom: 0,
+                  child: Center(
+                    child: SvgPicture.asset(sMain),
+                  ),
                 ),
-              ),
             SingleChildScrollView(
               padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
               child: TranslatorAnimatedColumn(
                 children: [
                   Container(
                     height: value.isActive
-                        ? kAppsize(context).height * 0.7
+                        ? kAppsize(context).height * 0.6
                         : kAppsize(context).height * 0.3,
                     padding:
                         EdgeInsets.symmetric(horizontal: horizontalPadding),
@@ -207,7 +212,11 @@ class _SettingsViewState extends State<MainScreen> {
                       ),
                     ],
                   )),
-                  if (value.historyItems.isNotEmpty)
+                  if (context
+                      .read<HistoryViewmodel>()
+                      .historyItemList
+                      .histories
+                      .isNotEmpty)
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -217,11 +226,22 @@ class _SettingsViewState extends State<MainScreen> {
                           child: Column(
                             children: [
                               HistoryWidget(
-                                historyItem: value.historyItems[0],
+                                historyItem: context
+                                    .read<HistoryViewmodel>()
+                                    .historyItemList
+                                    .histories[0],
                               ),
-                              if (value.historyItems.length > 1)
+                              if (context
+                                      .read<HistoryViewmodel>()
+                                      .historyItemList
+                                      .histories
+                                      .length >
+                                  1)
                                 HistoryWidget(
-                                  historyItem: value.historyItems[1],
+                                  historyItem: context
+                                      .read<HistoryViewmodel>()
+                                      .historyItemList
+                                      .histories[1],
                                 ),
                             ],
                           ),
@@ -229,10 +249,18 @@ class _SettingsViewState extends State<MainScreen> {
                         SizedBox(
                           width: horizontalPadding,
                         ),
-                        if (value.historyItems.length > 2)
+                        if (context
+                                .read<HistoryViewmodel>()
+                                .historyItemList
+                                .histories
+                                .length >
+                            2)
                           Expanded(
                             child: HistoryWidget(
-                              historyItem: value.historyItems[2],
+                              historyItem: context
+                                  .read<HistoryViewmodel>()
+                                  .historyItemList
+                                  .histories[2],
                             ),
                           ),
                       ],

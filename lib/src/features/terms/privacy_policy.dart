@@ -6,6 +6,7 @@ import 'package:ai_translator/src/shared/utils/theme.dart';
 import 'package:ai_translator/src/shared/widgets/scaffold.dart';
 import 'package:ai_translator/src/shared/widgets/textfields.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
 class PrivacyPolicyScreen extends StatefulWidget {

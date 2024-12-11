@@ -40,10 +40,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
           body: SingleChildScrollView(
             padding: EdgeInsets.symmetric(
                 horizontal: horizontalPadding, vertical: verticalPadding),
-            child: (value.historyItemList != null)
+            child: (value.historyItemList.histories.isEmpty)
                 ? TranslatorAnimatedColumn(
                     children: [
-                      ...value.historyItemList!.histories
+                      ...value.historyItemList.histories
                           .map((e) => HistoryWidget(
                                 historyItem: e,
                                 isHistory: true,

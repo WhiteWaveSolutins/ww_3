@@ -12,6 +12,7 @@ import 'package:ai_translator/src/shared/widgets/scaffold.dart';
 import 'package:ai_translator/src/shared/widgets/textfields.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
@@ -106,47 +107,42 @@ class _RecordingScreenState extends State<RecordingScreen>
               if (value.translatedText.isEmpty)
                 Align(
                   alignment: Alignment.bottomCenter,
-                  child: AnimatedBuilder(
-                    animation: _animationController,
-                    builder: (context, child) {
-                      return Container(
-                          margin: EdgeInsets.only(
-                              bottom: kAppsize(context).width * 0.4),
-                          width: 20.h + (_animationController.value * 20),
-                          height: 20.h + (_animationController.value * 20),
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: kPrimaryColor1.withOpacity(0.1)),
-                          child: Center(
-                            child: CupertinoButton(
-                              padding: EdgeInsets.zero,
-                              onPressed: () {
-                                if (value.isListening) {
-                                  value.stopListening();
-                                } else {
-                                  value.startListening(
-                                      targetLanguage: value.translatedLanguage,
-                                      fromLanguage: value.fromLanguage);
-                                }
-                              },
-                              child: value.isTranslating
-                                  ? const CircularProgressIndicator()
-                                  : ClipRRect(
-                                      borderRadius: BorderRadius.circular(
-                                          bigBorderRadius),
-                                      child: SvgPicture.asset(
-                                        sMicBig,
-                                        colorFilter: ColorFilter.mode(
-                                            value.isListening
-                                                ? kPrimaryColor1
-                                                : kTabFade1,
-                                            BlendMode.color),
-                                      ),
-                                    ),
-                            ),
-                          ));
-                    },
-                  ),
+                  child: Container(
+                      margin: EdgeInsets.only(
+                          bottom: kAppsize(context).width * 0.4),
+                      width: 50.h,
+                      height: 50.h,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: kPrimaryColor1.withOpacity(0.1)),
+                      child: Center(
+                        child: CupertinoButton(
+                          padding: EdgeInsets.zero,
+                          onPressed: () {
+                            if (value.isListening) {
+                              value.stopListening();
+                            } else {
+                              value.startListening(
+                                  targetLanguage: value.translatedLanguage,
+                                  fromLanguage: value.fromLanguage);
+                            }
+                          },
+                          child: value.isTranslating
+                              ? const CircularProgressIndicator()
+                              : ClipRRect(
+                                  borderRadius:
+                                      BorderRadius.circular(bigBorderRadius),
+                                  child: SvgPicture.asset(
+                                    sMicBig,
+                                    colorFilter: ColorFilter.mode(
+                                        value.isListening
+                                            ? kPrimaryColor1
+                                            : kTabFade1,
+                                        BlendMode.color),
+                                  ),
+                                ),
+                        ),
+                      )),
                 ),
               if (value.translatedText.isNotEmpty)
                 Column(
@@ -235,7 +231,7 @@ class ActionButton extends StatelessWidget {
       onPressed: onPressed,
       padding: EdgeInsets.zero,
       child: Container(
-          padding: EdgeInsets.all(5.fSize),
+          padding: EdgeInsets.all(5.sp),
           decoration: const BoxDecoration(
               shape: BoxShape.circle, gradient: kPrimaryGradient),
           child: Icon(

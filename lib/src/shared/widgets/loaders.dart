@@ -1,6 +1,6 @@
-import 'package:ai_translator/src/shared/utils/size_utils.dart';
 import 'package:ai_translator/src/shared/utils/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AppLoader extends StatelessWidget {
   const AppLoader({
@@ -20,8 +20,7 @@ class AppLoader extends StatelessWidget {
           color: context.primary.withOpacity(0.1),
           borderRadius: BorderRadius.circular(10.w),
         ),
-        child: CircularProgressIndicator.adaptive(
-          strokeWidth: !isSmall! ? 5.h : 3.h,
+        child: const CircularProgressIndicator(
           strokeCap: StrokeCap.round,
         ),
       ),

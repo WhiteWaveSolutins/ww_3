@@ -8,12 +8,12 @@ import 'package:ai_translator/src/features/terms/privacy_policy.dart';
 import 'package:ai_translator/src/features/translate/ui/camera.dart';
 import 'package:ai_translator/src/features/translate/ui/record.dart';
 import 'package:ai_translator/src/service-locators/settings/settings.dart';
-import 'package:ai_translator/src/shared/utils/size_utils.dart';
 import 'package:ai_translator/src/shared/utils/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 /// The Widget that configures your application.
@@ -24,8 +24,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Sizer(
-      builder: (context, orientation, deviceType) => ListenableBuilder(
+    return ScreenUtilInit(
+      designSize: const Size(375, 812),
+      builder: (BuildContext context, Widget? child) => ListenableBuilder(
         listenable: userSettingsController,
         builder: (BuildContext context, Widget? child) {
           return CupertinoApp(

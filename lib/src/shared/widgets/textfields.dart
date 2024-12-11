@@ -2,6 +2,7 @@ import 'package:ai_translator/src/shared/utils/size_utils.dart';
 import 'package:ai_translator/src/shared/utils/text_theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class FormLabelWidget extends StatelessWidget {
   const FormLabelWidget({

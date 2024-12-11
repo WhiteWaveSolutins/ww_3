@@ -111,7 +111,7 @@ class RecordingViewModel extends DisposableChangeNotifier {
                 notifyListeners();
 
                 // Translate the recognized text
-                translateText(canSave: true);
+                translateText(canSave: true, isSpeaking: true);
               }
             });
           }
@@ -132,7 +132,7 @@ class RecordingViewModel extends DisposableChangeNotifier {
     }
 
     // Start a new debounce timer
-    _debounceTextTimer = Timer(const Duration(seconds: 2), () {
+    _debounceTextTimer = Timer(const Duration(milliseconds: 200), () {
       // Call the callback function after the debounce delay
       callback(text);
     });

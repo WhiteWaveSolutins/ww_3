@@ -48,12 +48,12 @@ class TranslationService {
         },
       ),
       data: jsonEncode({
-        "model": "gpt-3.5-turbo",
+        "model": "gpt-4",
         "messages": [
           {
             "role": "system",
             "content":
-                "Your role is to translate the following text to $targetLanguage, nothing more. Do not do more than specified. If you do not understand the prompt, just return the translation of the text."
+                "Your role is to translate the following text $text to $targetLanguage, even if it is cut off. No matter what the text is, just translate it. Do not do any other thing or ask any questions. Even if the text is unclear, just translate what you can to the Target language to $targetLanguage."
           },
           {"role": "user", "content": text}
         ]

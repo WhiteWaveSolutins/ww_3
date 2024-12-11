@@ -10,6 +10,7 @@ import 'package:ai_translator/src/shared/widgets/drop_down.dart';
 import 'package:ai_translator/src/shared/widgets/scaffold.dart';
 import 'package:ai_translator/src/shared/widgets/textfields.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
@@ -78,8 +79,7 @@ class _SettingsViewState extends State<TranslatorSettingsScreen> {
                               padding: const EdgeInsets.all(4),
                               decoration: BoxDecoration(
                                   color: kTextColorDarkMode,
-                                  borderRadius:
-                                      BorderRadius.circular(15.fSize)),
+                                  borderRadius: BorderRadius.circular(15.sp)),
                               child: Text(
                                 'Upgrade',
                                 style: context.bodyMedium
