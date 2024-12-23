@@ -1,7 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:ai_translator/src/features/main/ui/main.dart';
+import 'package:ai_translator/src/features/main/presentation/ui/widgets/widgets.dart';
 import 'package:ai_translator/src/features/settings/ui/settings.dart';
 import 'package:ai_translator/src/features/translate/logic/viewmodel.dart';
 import 'package:ai_translator/src/service-locators/app.dart';
@@ -11,7 +11,6 @@ import 'package:ai_translator/src/shared/utils/theme.dart';
 import 'package:ai_translator/src/shared/widgets/buttons.dart';
 import 'package:ai_translator/src/shared/widgets/scaffold.dart';
 import 'package:ai_translator/src/shared/widgets/textfields.dart';
-
 import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
@@ -157,7 +156,10 @@ class _CameraViewState extends State<CameraView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const VerticalPadding(child: Text('Translated text')),
+                VerticalPadding(
+                    child: Text(value.isTranslating
+                        ? 'Translating.....'
+                        : 'Translated text')),
                 VerticalPadding(
                   child: HorizontalPadding(
                     child: Column(
@@ -208,13 +210,19 @@ class _CameraViewState extends State<CameraView> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             AppFabButton(
-                              key: const Key('switch'),
-                              onPressed: widget.onDetectorViewModeChanged,
+                              key: const Key('gallery'),
+                              onPressed: () {
+                                value.resetTranslation();
+                                widget.onDetectorViewModeChanged!();
+                              },
                               icon: CupertinoIcons.photo_fill_on_rectangle_fill,
                             ),
                             AppFabButton(
                                 key: const Key('camera'),
-                                onPressed: _switchLiveCamera,
+                                onPressed: () {
+                                  value.resetTranslation();
+                                  _switchLiveCamera();
+                                },
                                 icon: CupertinoIcons.switch_camera),
                           ],
                         ),

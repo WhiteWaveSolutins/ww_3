@@ -4,6 +4,7 @@ import 'package:ai_translator/src/shared/utils/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:gaimon/gaimon.dart';
 
 class TranslatorPrimaryButton extends StatelessWidget {
   const TranslatorPrimaryButton(
@@ -29,7 +30,10 @@ class TranslatorPrimaryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CupertinoButton(
-        onPressed: onPressed,
+        onPressed: () {
+          Gaimon.selection();
+          onPressed;
+        },
         padding: EdgeInsets.zero,
         child: Opacity(
           opacity: opacity!,
@@ -70,7 +74,10 @@ class AppFabButton extends StatelessWidget {
     return CupertinoButton(
       padding: EdgeInsets.zero,
       key: key,
-      onPressed: onPressed,
+      onPressed: () {
+        Gaimon.selection();
+        onPressed;
+      },
       child: Opacity(
         opacity: opacity!,
         child: Container(

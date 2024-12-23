@@ -33,7 +33,7 @@ class TextRecognizerPainter extends CustomPainter {
       ..strokeWidth = 2.0
       ..color = CupertinoColors.systemGrey.withOpacity(0.3);
 
-    final Paint background = Paint()..color = kBackgroundColor.withOpacity(0.4);
+    final Paint background = Paint()..color = kTabFade1.withOpacity(0.4);
 
     for (int i = 0; i < textBlocks.length; i++) {
       final textBlock = textBlocks[i];
@@ -48,7 +48,7 @@ class TextRecognizerPainter extends CustomPainter {
         ),
       );
       builder.pushStyle(ui.TextStyle(
-          color: kTextColor,
+          color: kBackgroundColor,
           background: background,
           fontSize: mediumTextSize,
           fontFamily: GoogleFonts.aBeeZee().fontFamily));

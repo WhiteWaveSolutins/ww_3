@@ -1,5 +1,5 @@
-import 'package:ai_translator/src/features/main/logic/history_viewmodel.dart';
-import 'package:ai_translator/src/features/main/ui/main.dart';
+import 'package:ai_translator/src/features/main/presentation/viewmodel/history_viewmodel.dart';
+import 'package:ai_translator/src/features/main/presentation/ui/widgets/widgets.dart';
 import 'package:ai_translator/src/features/settings/ui/settings.dart';
 import 'package:ai_translator/src/shared/utils/assets.dart';
 import 'package:ai_translator/src/shared/utils/size_utils.dart';
@@ -31,12 +31,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
     return Consumer<HistoryViewmodel>(
       builder: (context, value, child) => TranslatorScaffold(
           appBar: CupertinoNavigationBar(
-              leading: const AppbackButton(),
-              middle: Text(
-                'History',
-                style: context.displayLarge,
-              ),
-              trailing: const SettingsButton()),
+            leading: const AppbackButton(),
+            middle: Text(
+              'History',
+              style: context.displayLarge,
+            ),
+            trailing: const SettingsButton(),
+          ),
           body: SingleChildScrollView(
             padding: EdgeInsets.symmetric(
                 horizontal: horizontalPadding, vertical: verticalPadding),

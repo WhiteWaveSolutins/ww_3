@@ -1,4 +1,4 @@
-import 'package:ai_translator/src/routes/observer/observer.dart';
+import 'package:ai_translator/src/core/observer/observer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 

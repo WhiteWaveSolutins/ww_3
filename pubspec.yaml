@@ -24,7 +24,7 @@ dependencies:
   flutter_screenutil: ^5.9.3
   flutter_svg: ^2.0.16
   flutter_tts: ^4.2.0
-  gaimon: ^1.3.2
+  gaimon: ^1.4.0
   get: ^4.6.6
   get_it: ^8.0.2
   google_fonts: ^6.2.1

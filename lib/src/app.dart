@@ -1,5 +1,5 @@
-import 'package:ai_translator/src/features/translate/ui/cam.dart';
 import 'package:ai_translator/src/service-locators/settings/settings.dart';
+import 'package:ai_translator/src/shared/utils/route.dart';
 import 'package:ai_translator/src/shared/utils/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -32,12 +32,11 @@ class MyApp extends StatelessWidget {
               Locale('en', ''),
             ],
             theme: checkTheme(),
-            home: const TextRecognizerView(),
             onGenerateTitle: (BuildContext context) =>
                 AppLocalizations.of(context)!.appTitle,
-            // onGenerateRoute: (RouteSettings routeSettings) {
-            //   return routeConfig(routeSettings, context);
-            // },
+            onGenerateRoute: (RouteSettings routeSettings) {
+              return routeConfig(routeSettings, context);
+            },
           );
         },
       ),

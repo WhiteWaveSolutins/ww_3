@@ -4,12 +4,12 @@ import 'package:ai_translator/src/shared/utils/strings.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 
-class ApiException implements Exception {
-  ApiException(this.message);
+class ApiResponseException implements Exception {
+  ApiResponseException(this.message);
 
   final String message;
 
-  static ApiException getException(err) {
+  static ApiResponseException getException(err) {
     debugPrint('DioError: ${(err as DioException).message}');
     debugPrint('DioError: ${err.response?.data}');
     switch (err.type) {
@@ -69,7 +69,7 @@ class ApiException implements Exception {
   }
 }
 
-class OtherExceptions implements ApiException {
+class OtherExceptions implements ApiResponseException {
   OtherExceptions(this.newMessage);
 
   final String newMessage;
@@ -81,7 +81,7 @@ class OtherExceptions implements ApiException {
   String get message => newMessage;
 }
 
-class FormatException implements ApiException {
+class FormatException implements ApiResponseException {
   @override
   String toString() => message;
 
@@ -89,7 +89,7 @@ class FormatException implements ApiException {
   String get message => kFormatError;
 }
 
-class InternetConnectException implements ApiException {
+class InternetConnectException implements ApiResponseException {
   InternetConnectException(this.newMessage);
 
   final String newMessage;
@@ -101,7 +101,7 @@ class InternetConnectException implements ApiException {
   String get message => newMessage;
 }
 
-class InternalServerException implements ApiException {
+class InternalServerException implements ApiResponseException {
   @override
   String toString() {
     return message;
@@ -111,7 +111,7 @@ class InternalServerException implements ApiException {
   String get message => kServerError;
 }
 
-class UnAuthorizedException implements ApiException {
+class UnAuthorizedException implements ApiResponseException {
   @override
   String toString() {
     return message;

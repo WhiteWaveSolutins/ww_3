@@ -1,5 +1,5 @@
 import 'package:ai_translator/src/features/authentication/presentation/viewmodel/authentication_viewmodel.dart';
-import 'package:ai_translator/src/features/main/ui/main.dart';
+import 'package:ai_translator/src/features/main/presentation/ui/main.dart';
 import 'package:ai_translator/src/features/onboarding/onboarding/content.dart';
 import 'package:ai_translator/src/features/onboarding/splash/splash.dart';
 import 'package:ai_translator/src/shared/utils/size_utils.dart';

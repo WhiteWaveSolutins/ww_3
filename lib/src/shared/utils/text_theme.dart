@@ -1,4 +1,4 @@
-import 'package:ai_translator/src/routes/observer/navigation_service.dart';
+import 'package:ai_translator/src/core/observer/navigation_service.dart';
 import 'package:ai_translator/src/shared/utils/theme.dart';
 import 'package:flutter/cupertino.dart';
 

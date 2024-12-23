@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:ai_translator/src/features/main/logic/model.dart';
+import 'package:ai_translator/src/features/main/data/model.dart';
 import 'package:ai_translator/src/service-locators/app.dart';
 
 abstract class HistoryRepo {

@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:ai_translator/src/features/main/logic/history_viewmodel.dart';
-import 'package:ai_translator/src/features/main/logic/model.dart';
+import 'package:ai_translator/src/features/main/presentation/viewmodel/history_viewmodel.dart';
+import 'package:ai_translator/src/features/main/data/model.dart';
 import 'package:ai_translator/src/features/translate/logic/api.dart';
 import 'package:ai_translator/src/features/translate/logic/speech_util.dart';
 import 'package:ai_translator/src/features/translate/logic/text_to_speech.dart';
@@ -166,9 +166,11 @@ class RecordingViewModel extends DisposableChangeNotifier {
       } finally {
         isTranslating = false;
         final historyItem = HistoryItem(
-            countries: [fromLanguage, translatedLanguage],
-            word: text,
-            translation: _translatedTextAndSpeech[0]);
+          countries: [fromLanguage, translatedLanguage],
+          word: text,
+          translation: _translatedTextAndSpeech[0],
+          soundPath: _translatedTextAndSpeech[1],
+        );
         if (canSave!) {
           historyItems.add(historyItem);
           serviceLocator<HistoryViewmodel>()

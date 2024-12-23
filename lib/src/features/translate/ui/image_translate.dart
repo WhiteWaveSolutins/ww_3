@@ -1,11 +1,11 @@
 import 'package:ai_translator/src/features/translate/logic/viewmodel.dart';
-import 'package:ai_translator/src/features/translate/ui/text_detector_painter.dart';
+import 'package:ai_translator/src/features/translate/ui/widgets/text_detector_painter.dart';
 import 'package:ai_translator/src/service-locators/app.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 
-import 'detector_view.dart';
+import 'widgets/detector_view.dart';
 
 class TextRecognizerView extends StatefulWidget {
   static const routeName = '/camera';
@@ -47,56 +47,8 @@ class _TextRecognizerViewState extends State<TextRecognizerView> {
         initialCameraLensDirection: _cameraLensDirection,
         onCameraLensDirectionChanged: (value) => _cameraLensDirection = value,
       ),
-      // if (value.isTranslating) const AppLoader()
-
-      // Positioned(
-      //     top: 30,
-      //     left: 100,
-      //     right: 100,
-      //     child: Row(
-      //       children: [
-      //         const Spacer(),
-      //         Container(
-      //             decoration: BoxDecoration(
-      //               color: Colors.black54,
-      //               borderRadius: BorderRadius.circular(10.0),
-      //             ),
-      //             child: Padding(
-      //               padding: const EdgeInsets.all(4.0),
-      //               child: _buildDropdown(),
-      //             )),
-      //         const Spacer(),
-      //       ],
-      //     )),
     ]);
   }
-
-  // Widget _buildDropdown() => DropdownButton<TextRecognitionScript>(
-  //       value: _script,
-  //       icon: const Icon(Icons.arrow_downward),
-  //       elevation: 16,
-  //       style: const TextStyle(color: Colors.blue),
-  //       underline: Container(
-  //         height: 2,
-  //         color: Colors.blue,
-  //       ),
-  //       onChanged: (TextRecognitionScript? script) {
-  //         if (script != null) {
-  //           setState(() {
-  //             _script = script;
-  //             _textRecognizer.close();
-  //             _textRecognizer = TextRecognizer(script: _script);
-  //           });
-  //         }
-  //       },
-  //       items: TextRecognitionScript.values
-  //           .map<DropdownMenuItem<TextRecognitionScript>>((script) {
-  //         return DropdownMenuItem<TextRecognitionScript>(
-  //           value: script,
-  //           child: Text(script.name),
-  //         );
-  //       }).toList(),
-  //     );
 
   Future<void> _processImage(InputImage inputImage) async {
     if (!_canProcess) return;

@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:ai_translator/src/features/main/ui/main.dart';
+import 'package:ai_translator/src/features/main/presentation/ui/widgets/widgets.dart';
 import 'package:ai_translator/src/features/translate/logic/viewmodel.dart';
 import 'package:ai_translator/src/shared/utils/assets.dart';
 import 'package:ai_translator/src/shared/utils/size_utils.dart';
@@ -61,63 +61,43 @@ class _GalleryViewState extends State<GalleryView> {
       child: Stack(
         children: [
           SafeArea(
-            child: ListView(
-                padding: EdgeInsets.all(verticalPadding),
-                shrinkWrap: true,
-                children: [
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 20.0),
-                        child: AppFabButton(
-                          onPressed: widget.onDetectorViewModeChanged,
-                          icon: CupertinoIcons.camera,
-                        ),
-                      ),
-                    ],
+            child: Row(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(
+                      right: horizontalPadding, top: verticalPadding),
+                  child: AppFabButton(
+                    onPressed: widget.onDetectorViewModeChanged,
+                    icon: CupertinoIcons.camera,
                   ),
-                  _image != null
-                      ? Consumer<RecordingViewModel>(
-                          builder: (context, value, child) => Stack(
-                            children: [
-                              SizedBox(
-                                height: 400.h,
-                                width: 400.w,
-                                child: Stack(
-                                  fit: StackFit.expand,
-                                  children: <Widget>[
-                                    Image.file(_image!),
-                                  ],
-                                ),
-                              ),
-                              if (widget.customPaint != null)
-                                widget.customPaint!,
-                              if (value.isTranslating) const AppLoader()
-                            ],
-                          ),
-                        )
-                      : const Icon(
-                          CupertinoIcons.photo,
-                          size: 200,
-                        ),
-                  CupertinoButton(
-                    child: const Text('From Gallery'),
-                    onPressed: () => _getImage(ImageSource.gallery),
-                  ),
-                  CupertinoButton(
-                    child: const Text('Take a picture'),
-                    onPressed: () => _getImage(ImageSource.camera),
-                  ),
-
-                  // if (_image != null)
-                  //   Padding(
-                  //     padding: const EdgeInsets.all(16.0),
-                  //     child: Text(
-                  //         '${_path == null ? '' : 'Image path: $_path'}\n\n${widget.text ?? ''}'),
-                  //   ),
-                ]),
+                ),
+              ],
+            ),
           ),
-          if (widget.translations.isNotEmpty) _bottomWidget()
+          _image != null
+              ? Consumer<RecordingViewModel>(
+                  builder: (context, value, child) => Padding(
+                    padding: EdgeInsets.only(top: 60.h),
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: <Widget>[
+                        Image.file(
+                          _image!,
+                          fit: BoxFit.fitWidth,
+                        ),
+                        if (widget.customPaint != null) widget.customPaint!,
+                        if (value.isTranslating) const AppLoader()
+                      ],
+                    ),
+                  ),
+                )
+              : Center(
+                  child: Icon(
+                    CupertinoIcons.photo,
+                    size: 200.h,
+                  ),
+                ),
+          _bottomWidget()
         ],
       ),
     );
@@ -141,7 +121,10 @@ class _GalleryViewState extends State<GalleryView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const VerticalPadding(child: Text('Translated text')),
+                VerticalPadding(
+                    child: Text(value.isTranslating
+                        ? 'Translating.....'
+                        : 'Translated text')),
                 VerticalPadding(
                   child: HorizontalPadding(
                     child: Column(
@@ -188,6 +171,18 @@ class _GalleryViewState extends State<GalleryView> {
                               ],
                             ),
                           ),
+                        Row(
+                          children: [
+                            CupertinoButton(
+                              child: const Text('From Gallery'),
+                              onPressed: () => _getImage(ImageSource.gallery),
+                            ),
+                            CupertinoButton(
+                              child: const Text('Take a picture'),
+                              onPressed: () => _getImage(ImageSource.camera),
+                            ),
+                          ],
+                        )
                       ],
                     ),
                   ),

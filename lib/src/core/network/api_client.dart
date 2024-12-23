@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
-import 'package:ai_translator/src/core/utils/utils.dart';
+import 'package:ai_translator/src/core/network/exceptions.dart';
 import 'package:ai_translator/src/service-locators/app.dart';
 import 'package:ai_translator/src/shared/utils/strings.dart';
 import 'package:dio/dio.dart';
@@ -66,7 +66,7 @@ class ApiClient {
       );
       return response;
     } catch (e) {
-      throw ApiException.getException(e);
+      throw ApiResponseException.getException(e);
     }
   }
 
@@ -90,7 +90,7 @@ class ApiClient {
       );
       return response;
     } catch (e) {
-      throw ApiException.getException(e);
+      throw ApiResponseException.getException(e);
     }
   }
 
@@ -108,7 +108,7 @@ class ApiClient {
       );
       return response;
     } catch (e) {
-      throw ApiException.getException(e);
+      throw ApiResponseException.getException(e);
     }
   }
 
@@ -126,7 +126,7 @@ class ApiClient {
       );
       return response;
     } catch (e) {
-      throw ApiException.getException(e);
+      throw ApiResponseException.getException(e);
     }
   }
 
@@ -144,7 +144,7 @@ class ApiClient {
       );
       return response;
     } catch (e) {
-      throw ApiException.getException(e);
+      throw ApiResponseException.getException(e);
     }
   }
 

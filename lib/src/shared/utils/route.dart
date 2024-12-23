@@ -1,11 +1,11 @@
 import 'package:ai_translator/src/features/authentication/presentation/viewmodel/user_provider.dart';
-import 'package:ai_translator/src/features/main/ui/history.dart';
-import 'package:ai_translator/src/features/main/ui/main.dart';
+import 'package:ai_translator/src/features/main/presentation/ui/history.dart';
+import 'package:ai_translator/src/features/main/presentation/ui/main.dart';
 import 'package:ai_translator/src/features/onboarding/onboarding/onboarding.dart';
 import 'package:ai_translator/src/features/onboarding/splash/splash.dart';
 import 'package:ai_translator/src/features/settings/ui/settings.dart';
 import 'package:ai_translator/src/features/terms/privacy_policy.dart';
-import 'package:ai_translator/src/features/translate/ui/cam.dart';
+import 'package:ai_translator/src/features/translate/ui/image_translate.dart';
 import 'package:ai_translator/src/features/translate/ui/record.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

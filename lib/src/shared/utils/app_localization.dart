@@ -1,4 +1,4 @@
-import 'package:ai_translator/src/routes/observer/navigation_service.dart';
+import 'package:ai_translator/src/core/observer/navigation_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -27,8 +27,6 @@ class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalization> {
   bool isSupported(Locale locale) =>
       AppLocalization.languages().contains(locale.languageCode);
 
-  //Returning a SynchronousFuture here because an async "load" operation
-  //cause an async "load" operation
   @override
   Future<AppLocalization> load(Locale locale) {
     return SynchronousFuture<AppLocalization>(AppLocalization(locale));

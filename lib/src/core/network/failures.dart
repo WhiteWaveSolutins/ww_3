@@ -3,8 +3,8 @@ abstract class Failure {
   final String message;
 }
 
-class ApiFailure extends Failure {
-  ApiFailure({String message = ''}) : super(message);
+class ApiResponseFailureModel extends Failure {
+  ApiResponseFailureModel({String message = ''}) : super(message);
 
   @override
   String toString() => message;
