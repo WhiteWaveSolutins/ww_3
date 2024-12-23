@@ -22,14 +22,20 @@ class TextToSpeechService {
     }
   }
 
-  Future<void> playAudio(String path) async {
+  Future<Duration> playAudio(String path, {required bool stopPlaying}) async {
     final player = AudioPlayer();
-    await player.setFilePath(path);
-    await player.play();
+    if (stopPlaying) {
+      await player.stop();
+      return Duration.zero;
+    } else {
+      await player.setFilePath(path);
+      await player.play();
 // await player.pause();
 // await player.seek(Duration(seconds: 10));
-    await player.setSpeed(0.1);
-    await player.setVolume(1.0);
-    await player.stop();
+      await player.setSpeed(0.1);
+      await player.setVolume(1.0);
+      await player.stop();
+      return player.duration ?? Duration.zero;
+    }
   }
 }

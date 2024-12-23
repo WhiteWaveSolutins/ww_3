@@ -73,8 +73,7 @@ class _TextRecognizerViewState extends State<TextRecognizerView> {
     } else {
       // _text = 'Recognized text:\n\n${recognizedText.text}';
       _textBlocks = recognizedText.blocks;
-      await translateBlocksOfImage(serviceLocator<
-          RecordingViewModel>()); // Get translations even for this case
+      await translateBlocksOfImage(serviceLocator<RecordingViewModel>());
 
       final painter = BoundingRectPainter(_textBlocks, _translations);
       _customPaint = CustomPaint(painter: painter);

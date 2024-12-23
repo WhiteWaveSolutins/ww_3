@@ -6,6 +6,7 @@ import 'package:ai_translator/src/shared/utils/size_utils.dart';
 import 'package:ai_translator/src/shared/utils/text_theme.dart';
 import 'package:ai_translator/src/shared/widgets/animated_column_and_row.dart';
 import 'package:ai_translator/src/shared/widgets/scaffold.dart';
+import 'package:ai_translator/src/shared/widgets/textfields.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -30,31 +31,56 @@ class _HistoryScreenState extends State<HistoryScreen> {
   Widget build(BuildContext context) {
     return Consumer<HistoryViewmodel>(
       builder: (context, value, child) => TranslatorScaffold(
-          appBar: CupertinoNavigationBar(
-            leading: const AppbackButton(),
-            middle: Text(
-              'History',
-              style: context.displayLarge,
-            ),
-            trailing: const SettingsButton(),
+        appBar: CupertinoNavigationBar(
+          leading: const AppbackButton(),
+          middle: Text(
+            'History',
+            style: context.displayLarge,
           ),
-          body: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(
-                horizontal: horizontalPadding, vertical: verticalPadding),
-            child: (value.historyItemList.histories.isEmpty)
-                ? TranslatorAnimatedColumn(
+          trailing: const SettingsButton(),
+        ),
+        body: AppBackground(
+          imageBg: sMainBg,
+          child: SafeArea(
+            child: HorizontalPadding(
+              child: Column(
+                children: [
+                  const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      ...value.historyItemList.histories
-                          .map((e) => HistoryWidget(
-                                historyItem: e,
-                                isHistory: true,
-                              ))
+                      AppbackButton(),
+                      HeaderText(
+                        text: 'History',
+                      ),
+                      SettingsButton(),
                     ],
-                  )
-                : Center(
-                    child: SvgPicture.asset(sMain),
                   ),
-          )),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: horizontalPadding,
+                          vertical: verticalPadding),
+                      child: (value.historyItemList.histories.isEmpty)
+                          ? TranslatorAnimatedColumn(
+                              children: [
+                                ...value.historyItemList.histories
+                                    .map((e) => HistoryWidget(
+                                          historyItem: e,
+                                          isHistory: true,
+                                        ))
+                              ],
+                            )
+                          : Center(
+                              child: SvgPicture.asset(sMain),
+                            ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

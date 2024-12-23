@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
             supportedLocales: const [
               Locale('en', ''),
             ],
-            theme: checkTheme(),
+            theme: translatorLightTheme,
             onGenerateTitle: (BuildContext context) =>
                 AppLocalizations.of(context)!.appTitle,
             onGenerateRoute: (RouteSettings routeSettings) {

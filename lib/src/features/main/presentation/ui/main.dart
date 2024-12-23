@@ -1,6 +1,6 @@
-import 'package:ai_translator/src/features/main/presentation/viewmodel/history_viewmodel.dart';
 import 'package:ai_translator/src/features/main/presentation/ui/history.dart';
 import 'package:ai_translator/src/features/main/presentation/ui/widgets/widgets.dart';
+import 'package:ai_translator/src/features/main/presentation/viewmodel/history_viewmodel.dart';
 import 'package:ai_translator/src/features/settings/ui/settings.dart';
 import 'package:ai_translator/src/features/translate/logic/viewmodel.dart';
 import 'package:ai_translator/src/features/translate/ui/image_translate.dart';

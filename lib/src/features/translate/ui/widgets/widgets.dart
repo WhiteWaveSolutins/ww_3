@@ -89,13 +89,14 @@ class SwapWidget extends StatelessWidget {
         child: Column(
           children: value.languages.map((language) {
             return CupertinoButton(
+              padding: EdgeInsets.zero,
               onPressed: () {
                 if (isInput!) {
                   value.setInputLanguage(language);
                 } else {
                   value.setOutputLanguage(language);
                 }
-
+                value.resetTranslation();
                 Navigator.pop(context); // Close the bottom sheet
               },
               child: Container(
@@ -120,6 +121,8 @@ class SwapWidget extends StatelessWidget {
                         } else {
                           value.setOutputLanguage(language);
                         }
+                        value.resetTranslation();
+                        Navigator.pop(context); // Close the bottom sheet
                       },
                       padding: EdgeInsets.zero,
                       child: Container(
@@ -212,10 +215,10 @@ class _FadingTextWidgetState extends State<FadingTextWidget>
         widget.text,
         style: widget.textStyle ??
             TextStyle(
-              color: kTabFade1,
-              fontSize: textSize,
-              fontWeight: FontWeight.bold,
-            ),
+                color: kTabFade1,
+                fontSize: textSize,
+                fontWeight: FontWeight.bold,
+                overflow: TextOverflow.ellipsis),
         textAlign: TextAlign.start,
       ),
     );

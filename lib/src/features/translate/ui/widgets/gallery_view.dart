@@ -110,7 +110,8 @@ class _GalleryViewState extends State<GalleryView> {
           padding: EdgeInsets.symmetric(
               vertical: verticalPadding, horizontal: horizontalPadding),
           width: kAppsize(context).width,
-          height: kAppsize(context).height * 0.25,
+          height: kAppsize(context).height *
+              ((widget.translations.isNotEmpty) ? 0.25 : 0.2),
           decoration: BoxDecoration(
               color: kBackgroundColor,
               borderRadius: BorderRadius.only(
@@ -122,9 +123,10 @@ class _GalleryViewState extends State<GalleryView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 VerticalPadding(
-                    child: Text(value.isTranslating
-                        ? 'Translating.....'
-                        : 'Translated text')),
+                    child: Text(
+                        (widget.translations.isEmpty || value.isTranslating)
+                            ? 'Translating.....'
+                            : 'Translated text')),
                 VerticalPadding(
                   child: HorizontalPadding(
                     child: Column(
@@ -174,13 +176,18 @@ class _GalleryViewState extends State<GalleryView> {
                         Row(
                           children: [
                             CupertinoButton(
-                              child: const Text('From Gallery'),
-                              onPressed: () => _getImage(ImageSource.gallery),
-                            ),
+                                child: const Text('From Gallery'),
+                                onPressed: () {
+                                  value.resetTranslation();
+
+                                  _getImage(ImageSource.gallery);
+                                }),
                             CupertinoButton(
-                              child: const Text('Take a picture'),
-                              onPressed: () => _getImage(ImageSource.camera),
-                            ),
+                                child: const Text('Take a picture'),
+                                onPressed: () {
+                                  value.resetTranslation();
+                                  _getImage(ImageSource.camera);
+                                }),
                           ],
                         )
                       ],

@@ -1,7 +1,8 @@
 import 'dart:io';
-import 'dart:ui';
 import 'dart:ui' as ui;
+import 'dart:ui';
 
+import 'package:ai_translator/src/features/translate/ui/widgets/coordinates_translator.dart';
 import 'package:ai_translator/src/shared/utils/size_utils.dart';
 import 'package:ai_translator/src/shared/utils/theme.dart';
 import 'package:camera/camera.dart';
@@ -9,18 +10,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 
-import 'coordinates_translator.dart';
-
 class TextRecognizerPainter extends CustomPainter {
   TextRecognizerPainter(
-    this.textBlocks,
+    this.blocks,
     this.translatedTexts,
     this.imageSize,
     this.rotation,
     this.cameraLensDirection,
   );
 
-  final List<TextBlock> textBlocks;
+  final List<TextBlock> blocks;
   final List<String> translatedTexts;
   final Size imageSize;
   final InputImageRotation rotation;
@@ -30,32 +29,22 @@ class TextRecognizerPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final Paint paint = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0
-      ..color = CupertinoColors.systemGrey.withOpacity(0.3);
+      ..strokeWidth = 3.0
+      ..color = CupertinoColors.systemGrey6;
 
-    final Paint background = Paint()..color = kTabFade1.withOpacity(0.4);
+    final Paint background = Paint()..color = const Color(0x99000000);
 
-    for (int i = 0; i < textBlocks.length; i++) {
-      final textBlock = textBlocks[i];
-      final translatedText = translatedTexts[i];
-
-      // Build translated text as a Paragraph
+    for (final textBlock in blocks) {
       final ParagraphBuilder builder = ParagraphBuilder(
         ParagraphStyle(
-          textAlign: TextAlign.left,
-          fontSize: 16,
-          textDirection: TextDirection.ltr,
-        ),
+            textAlign: TextAlign.left,
+            fontSize: 10,
+            textDirection: TextDirection.ltr),
       );
-      builder.pushStyle(ui.TextStyle(
-          color: kBackgroundColor,
-          background: background,
-          fontSize: mediumTextSize,
-          fontFamily: GoogleFonts.aBeeZee().fontFamily));
-      builder.addText(translatedText);
+      builder.pushStyle(ui.TextStyle(color: kTabFade1, background: background));
+      builder.addText(textBlock.text);
       builder.pop();
 
-      // Translate bounding box coordinates
       final left = translateX(
         textBlock.boundingBox.left,
         size,
@@ -85,10 +74,11 @@ class TextRecognizerPainter extends CustomPainter {
         cameraLensDirection,
       );
 
-      // Draw bounding box
-      canvas.drawRect(Rect.fromLTRB(left, top, right, bottom), paint);
+      canvas.drawRect(
+        Rect.fromLTRB(left, top, right, bottom),
+        paint,
+      );
 
-      // Translate corner points for polygons
       final List<Offset> cornerPoints = <Offset>[];
       for (final point in textBlock.cornerPoints) {
         double x = translateX(
@@ -106,7 +96,7 @@ class TextRecognizerPainter extends CustomPainter {
           cameraLensDirection,
         );
 
-        if (Platform.isIOS) {
+        if (Platform.isAndroid) {
           switch (cameraLensDirection) {
             case CameraLensDirection.front:
               switch (rotation) {
@@ -176,7 +166,6 @@ class TextRecognizerPainter extends CustomPainter {
       cornerPoints.add(cornerPoints.first);
       canvas.drawPoints(PointMode.polygon, cornerPoints, paint);
 
-      // Draw translated text
       canvas.drawParagraph(
         builder.build()
           ..layout(ParagraphConstraints(
@@ -194,8 +183,7 @@ class TextRecognizerPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(TextRecognizerPainter oldDelegate) {
-    return oldDelegate.textBlocks != textBlocks ||
-        oldDelegate.translatedTexts != translatedTexts;
+    return oldDelegate.translatedTexts != translatedTexts;
   }
 }
 
@@ -207,51 +195,57 @@ class BoundingRectPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    if (textBlocks.isEmpty || translatedTexts.isEmpty) return;
+
     final Paint rectPaint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0
       ..color = CupertinoColors.systemGrey;
 
-    final Paint textBackgroundPaint = Paint()..color = const Color(0x99000000);
+    final Paint textBackgroundPaint = Paint()..color = kTabFade1;
 
     final textStyle = ui.TextStyle(
-      color: CupertinoColors.white,
-      fontSize: 14,
+      color: kBackgroundColor,
       background: textBackgroundPaint,
+      fontSize: mediumTextSize,
+      fontFamily: GoogleFonts.aBeeZee().fontFamily,
     );
 
-    for (int i = 0; i < textBlocks.length; i++) {
-      final block = textBlocks[i];
+    // Calculate a unified bounding rectangle that encompasses all textBlocks
+    double minX = double.infinity;
+    double minY = double.infinity;
+    double maxX = double.negativeInfinity;
+    double maxY = double.negativeInfinity;
+
+    for (final block in textBlocks) {
       final rect = block.boundingBox;
-
-      // Draw bounding rectangle
-      canvas.drawRect(
-        Rect.fromLTWH(
-          rect.left,
-          rect.top,
-          rect.width,
-          rect.height,
-        ),
-        rectPaint,
-      );
-
-      // Draw translated text
-      final translatedText =
-          i < translatedTexts.length ? translatedTexts[i] : '';
-      final paragraphBuilder = ParagraphBuilder(
-        ParagraphStyle(
-          textAlign: TextAlign.left,
-          textDirection: TextDirection.ltr,
-        ),
-      )
-        ..pushStyle(textStyle)
-        ..addText(translatedText);
-
-      final paragraph = paragraphBuilder.build()
-        ..layout(ParagraphConstraints(width: rect.width));
-
-      canvas.drawParagraph(paragraph, Offset(rect.left, rect.top));
+      minX = rect.left < minX ? rect.left : minX;
+      minY = rect.top < minY ? rect.top : minY;
+      maxX = rect.right > maxX ? rect.right : maxX;
+      maxY = rect.bottom > maxY ? rect.bottom : maxY;
     }
+
+    // Draw the unified bounding rectangle
+    final Rect unifiedRect = Rect.fromLTRB(minX, minY, maxX, maxY);
+    canvas.drawRect(unifiedRect, rectPaint);
+
+    // Combine all translated texts into a single string
+    final String combinedText = translatedTexts.join('\n');
+
+    // Draw the combined text inside the unified bounding rectangle
+    final ParagraphBuilder paragraphBuilder = ParagraphBuilder(
+      ParagraphStyle(
+        textAlign: TextAlign.left,
+        textDirection: TextDirection.ltr,
+      ),
+    )
+      ..pushStyle(textStyle)
+      ..addText(combinedText);
+
+    final Paragraph paragraph = paragraphBuilder.build()
+      ..layout(ParagraphConstraints(width: unifiedRect.width));
+
+    canvas.drawParagraph(paragraph, Offset(unifiedRect.left, unifiedRect.top));
   }
 
   @override

@@ -107,7 +107,7 @@ class HistoryWidget extends StatelessWidget {
                         style: context.displayLarge,
                       ),
                       const VerticalSpacer(),
-                      Text(historyItem.translation),
+                      Text(historyItem.translations[0]),
                     ],
                   ),
               ],

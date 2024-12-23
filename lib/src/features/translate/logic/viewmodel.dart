@@ -168,8 +168,7 @@ class RecordingViewModel extends DisposableChangeNotifier {
         final historyItem = HistoryItem(
           countries: [fromLanguage, translatedLanguage],
           word: text,
-          translation: _translatedTextAndSpeech[0],
-          soundPath: _translatedTextAndSpeech[1],
+          translations: _translatedTextAndSpeech,
         );
         if (canSave!) {
           historyItems.add(historyItem);
@@ -182,14 +181,27 @@ class RecordingViewModel extends DisposableChangeNotifier {
   }
 
   Future<void> playTranslatedText() async {
-    if (_translatedTextAndSpeech.isNotEmpty &&
-        _translatedTextAndSpeech.length > 1) {
-      isPlayingAudio = true;
-      await _ttsService.playAudio(_translatedTextAndSpeech[1]);
-      await Future.delayed(const Duration(seconds: 2), () {
-        isPlayingAudio = false;
-      });
+    if (_isPlayingAudio) {
+      stopPlayingTranslatedText();
+    } else {
+      if (_translatedTextAndSpeech.isNotEmpty &&
+          _translatedTextAndSpeech.length > 1) {
+        isPlayingAudio = true;
+        final s = await _ttsService.playAudio(_translatedTextAndSpeech[1],
+            stopPlaying: false);
+        await Future.delayed(s, () {
+          isPlayingAudio = false;
+        });
+      }
     }
+  }
+
+  Future<void> stopPlayingTranslatedText() async {
+    final s = await _ttsService.playAudio(_translatedTextAndSpeech[1],
+        stopPlaying: true);
+    await Future.delayed(s, () {
+      isPlayingAudio = false;
+    });
   }
 
 //to set the input lang

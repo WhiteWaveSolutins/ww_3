@@ -33,6 +33,5 @@ final _dummyHistory = [
   HistoryItem(
       countries: ['usa', 'france'],
       word: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit...',
-      soundPath: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit...',
-      translation: 'a very long translated text'),
+      translations: ['a very long translated text', 'smsmskmsk']),
 ];

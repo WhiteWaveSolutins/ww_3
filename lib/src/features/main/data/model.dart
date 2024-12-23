@@ -37,26 +37,22 @@ class HistoryItemList {
 class HistoryItem {
   final List<String> countries;
   final String word;
-  final String translation;
-  final String soundPath;
+  final List<String> translations;
   HistoryItem({
     required this.countries,
     required this.word,
-    required this.translation,
-    required this.soundPath,
+    required this.translations,
   });
 
   HistoryItem copyWith({
     List<String>? countries,
     String? word,
-    String? translation,
-    String? soundPath,
+    List<String>? translations,
   }) {
     return HistoryItem(
       countries: countries ?? this.countries,
       word: word ?? this.word,
-      translation: translation ?? this.translation,
-      soundPath: soundPath ?? this.soundPath,
+      translations: translations ?? this.translations,
     );
   }
 
@@ -64,22 +60,23 @@ class HistoryItem {
     return <String, dynamic>{
       'countries': countries,
       'word': word,
-      'translation': translation,
-      'soundPath': soundPath,
+      'translations': translations,
     };
   }
 
   factory HistoryItem.fromMap(Map<String, dynamic> map) {
     return HistoryItem(
-      countries: List<String>.from((map['countries'] as List<String>)),
-      word: map['word'] as String,
-      translation: map['translation'] as String,
-      soundPath: map['soundPath'] as String,
+      countries: map['countries'] != null
+          ? List<String>.from((map['countries'] as List<dynamic>))
+          : [],
+      word: map['word'] ?? '',
+      translations: map['translations'] != null
+          ? List<String>.from((map['translations'] as List<dynamic>))
+          : [],
     );
   }
 
   @override
-  String toString() {
-    return 'HistoryItem(countries: $countries, word: $word, translation: $translation, soundPath: $soundPath)';
-  }
+  String toString() =>
+      'HistoryItem(countries: $countries, word: $word, translation: $translations)';
 }

@@ -30,10 +30,12 @@ class TranslatorPrimaryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CupertinoButton(
-        onPressed: () {
-          Gaimon.selection();
-          onPressed;
-        },
+        onPressed: onPressed == null
+            ? null
+            : () {
+                Gaimon.selection();
+                onPressed!();
+              },
         padding: EdgeInsets.zero,
         child: Opacity(
           opacity: opacity!,
@@ -74,10 +76,12 @@ class AppFabButton extends StatelessWidget {
     return CupertinoButton(
       padding: EdgeInsets.zero,
       key: key,
-      onPressed: () {
-        Gaimon.selection();
-        onPressed;
-      },
+      onPressed: onPressed == null
+          ? null
+          : () {
+              Gaimon.selection();
+              onPressed!();
+            },
       child: Opacity(
         opacity: opacity!,
         child: Container(

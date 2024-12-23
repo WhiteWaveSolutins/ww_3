@@ -9,6 +9,7 @@ import 'package:ai_translator/src/shared/utils/assets.dart';
 import 'package:ai_translator/src/shared/utils/size_utils.dart';
 import 'package:ai_translator/src/shared/utils/theme.dart';
 import 'package:ai_translator/src/shared/widgets/buttons.dart';
+import 'package:ai_translator/src/shared/widgets/loaders.dart';
 import 'package:ai_translator/src/shared/widgets/scaffold.dart';
 import 'package:ai_translator/src/shared/widgets/textfields.dart';
 import 'package:camera/camera.dart';
@@ -112,7 +113,9 @@ class _CameraViewState extends State<CameraView> {
                   ),
           ),
           _backButton(),
-          _bottomWidget()
+          _bottomWidget(),
+          if (serviceLocator<RecordingViewModel>().isTranslating)
+            const AppLoader()
         ],
       ),
     );
@@ -145,7 +148,8 @@ class _CameraViewState extends State<CameraView> {
           padding: EdgeInsets.symmetric(
               vertical: verticalPadding, horizontal: horizontalPadding),
           width: kAppsize(context).width,
-          height: kAppsize(context).height * 0.25,
+          height: kAppsize(context).height *
+              ((widget.translations.isNotEmpty) ? 0.25 : 0.2),
           decoration: BoxDecoration(
               color: kBackgroundColor,
               borderRadius: BorderRadius.only(
@@ -157,9 +161,10 @@ class _CameraViewState extends State<CameraView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 VerticalPadding(
-                    child: Text(value.isTranslating
-                        ? 'Translating.....'
-                        : 'Translated text')),
+                    child: Text(
+                        (widget.translations.isEmpty || value.isTranslating)
+                            ? 'Translating.....'
+                            : 'Translated text')),
                 VerticalPadding(
                   child: HorizontalPadding(
                     child: Column(

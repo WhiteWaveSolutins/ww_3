@@ -6,11 +6,11 @@ import 'package:ai_translator/src/shared/utils/assets.dart';
 import 'package:ai_translator/src/shared/utils/size_utils.dart';
 import 'package:ai_translator/src/shared/utils/text_theme.dart';
 import 'package:ai_translator/src/shared/utils/theme.dart';
-import 'package:ai_translator/src/shared/widgets/wave.dart';
 import 'package:ai_translator/src/shared/widgets/buttons.dart';
 import 'package:ai_translator/src/shared/widgets/drop_down.dart';
 import 'package:ai_translator/src/shared/widgets/scaffold.dart';
 import 'package:ai_translator/src/shared/widgets/textfields.dart';
+import 'package:ai_translator/src/shared/widgets/wave.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -70,9 +70,11 @@ class _RecordingScreenState extends State<RecordingScreen>
                         VerticalSpacer(
                           space: 50.h,
                         ),
-                        FadingTextWidget(
-                          text: value.spokenText,
-                          textStyle: context.displayLarge,
+                        HorizontalPadding(
+                          child: FadingTextWidget(
+                            text: value.spokenText,
+                            textStyle: context.displayLarge,
+                          ),
                         ),
                         Padding(
                           padding: EdgeInsets.only(top: 70.h),
