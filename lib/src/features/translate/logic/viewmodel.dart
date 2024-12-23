@@ -25,7 +25,7 @@ class RecordingViewModel extends DisposableChangeNotifier {
   bool _isListening = false;
   bool _isTranslating = false;
   String _spokenText = '';
-  String _translatedText = '';
+  List<String> _translatedTextAndSpeech = [];
   bool _speechEnabled = false;
 
   bool _isPlayingAudio = false;
@@ -60,7 +60,7 @@ class RecordingViewModel extends DisposableChangeNotifier {
   String get fromLanguage => _fromLanguage;
 
   String get spokenText => _spokenText;
-  String get translatedText => _translatedText;
+  List<String> get translatedTextAndSpeech => _translatedTextAndSpeech;
   bool get isListening => _isListening;
   bool get isTranslating => _isTranslating;
   bool get speechEnabled => _speechEnabled;
@@ -159,7 +159,7 @@ class RecordingViewModel extends DisposableChangeNotifier {
               : textEditingController.text.trim();
 
       try {
-        _translatedText =
+        _translatedTextAndSpeech =
             await _apiService.translateText(text, translatedLanguage);
       } catch (e) {
         debugPrint("Translation Error: $e");
@@ -168,7 +168,7 @@ class RecordingViewModel extends DisposableChangeNotifier {
         final historyItem = HistoryItem(
             countries: [fromLanguage, translatedLanguage],
             word: text,
-            translation: _translatedText);
+            translation: _translatedTextAndSpeech[0]);
         if (canSave!) {
           historyItems.add(historyItem);
           serviceLocator<HistoryViewmodel>()
@@ -180,9 +180,10 @@ class RecordingViewModel extends DisposableChangeNotifier {
   }
 
   Future<void> playTranslatedText() async {
-    if (_translatedText.isNotEmpty) {
+    if (_translatedTextAndSpeech.isNotEmpty &&
+        _translatedTextAndSpeech.length > 1) {
       isPlayingAudio = true;
-      await _ttsService.playText(_translatedText, translatedLanguage);
+      await _ttsService.playAudio(_translatedTextAndSpeech[1]);
       await Future.delayed(const Duration(seconds: 2), () {
         isPlayingAudio = false;
       });
@@ -204,7 +205,7 @@ class RecordingViewModel extends DisposableChangeNotifier {
 
   void resetTranslation() {
     _spokenText = '';
-    _translatedText = '';
+    _translatedTextAndSpeech = [];
     textEditingController.text = '';
     _isActive = false;
 

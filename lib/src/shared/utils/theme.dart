@@ -63,8 +63,8 @@ const kPrimaryColor2 = Color(0xff7FDF76);
 final kBottomSheetColor = const Color(0xff39397B).withOpacity(0.9);
 
 const kPrimaryGradient = LinearGradient(colors: [
-  kPrimaryColor2,
   kPrimaryColor1,
+  kPrimaryColor2,
 ]);
 
 const kBackgroundColor = Color(0xff1B1B26);

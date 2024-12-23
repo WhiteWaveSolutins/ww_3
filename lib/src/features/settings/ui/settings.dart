@@ -1,11 +1,11 @@
-import 'package:ai_translator/src/features/authentication/logic/authentication_viewmodel.dart';
+import 'package:ai_translator/src/features/authentication/presentation/viewmodel/authentication_viewmodel.dart';
 import 'package:ai_translator/src/features/onboarding/onboarding/onboarding.dart';
-import 'package:ai_translator/src/features/onboarding/splash/splash.dart';
 import 'package:ai_translator/src/features/terms/privacy_policy.dart';
 import 'package:ai_translator/src/shared/utils/assets.dart';
 import 'package:ai_translator/src/shared/utils/size_utils.dart';
 import 'package:ai_translator/src/shared/utils/text_theme.dart';
 import 'package:ai_translator/src/shared/utils/theme.dart';
+import 'package:ai_translator/src/shared/widgets/buttons.dart';
 import 'package:ai_translator/src/shared/widgets/drop_down.dart';
 import 'package:ai_translator/src/shared/widgets/scaffold.dart';
 import 'package:ai_translator/src/shared/widgets/textfields.dart';
@@ -34,151 +34,165 @@ class _SettingsViewState extends State<TranslatorSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Consumer<AuthenticationViewModel>(
-      builder: (context, value, child) => TranslatorScaffold(
-        appBar: CupertinoNavigationBar(
-          leading: const AppbackButton(),
-          middle: Text(
-            'Settings',
-            style: context.displayLarge,
-          ),
-          trailing: CupertinoButton(
-              padding: EdgeInsets.only(bottom: smallVerticalPadding),
-              child: const Icon(CupertinoIcons.square_arrow_left),
-              onPressed: () async {
-                await value.logout();
-                goToLogin();
-              }),
-        ),
-        isLoading: value.isLoading,
-        body: HorizontalPadding(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      builder: (context, value, child) => AppBackground(
+        imageBg: sMainBg,
+        child: SafeArea(
+          child: VerticalPadding(
+            child: HorizontalPadding(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Container(
-                    height: kAppsize(context).height * 0.1,
-                    margin: EdgeInsets.only(top: verticalPadding),
-                    padding:
-                        EdgeInsets.symmetric(horizontal: horizontalPadding),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(bigBorderRadius),
-                        gradient: kPrimaryGradient),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Get free trial for a week',
-                          style: context.bodyLarge
-                              .copyWith(color: kTextColorDarkMode),
-                        ),
-                        CupertinoButton(
-                            child: Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                  color: kTextColorDarkMode,
-                                  borderRadius: BorderRadius.circular(15.sp)),
-                              child: Text(
-                                'Upgrade',
-                                style: context.bodyMedium
-                                    .copyWith(color: kPrimaryColor1),
-                              ),
-                            ),
-                            onPressed: () {})
-                      ],
-                    ),
-                  ),
-                  const VerticalPadding(
-                    child: Text(
-                      'About App',
-                    ),
-                  ),
-                  VerticalPadding(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: horizontalPadding, vertical: 5.h),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(bigBorderRadius),
-                          color: kSecondaryFade1.withOpacity(0.05)),
-                      child: SettingsText(
-                        text: 'Privacy Policy and terms of use',
-                        onTap: () {
-                          Navigator.restorablePushNamed(
-                              context, PrivacyPolicyScreen.routeName);
-                        },
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const AppbackButton(),
+                      const HeaderText(
+                        text: 'Settings',
                       ),
-                    ),
+                      AppFabButton(
+                          bgColor: kSecondaryFade1.withOpacity(0.1),
+                          icon: CupertinoIcons.square_arrow_left,
+                          iconColor: kTabFade1,
+                          onPressed: () async {
+                            await value.logout();
+                            goToLogin();
+                          }),
+                    ],
                   ),
-                  const VerticalPadding(
-                    child: Text(
-                      'The Main Ones',
-                    ),
-                  ),
-                  VerticalPadding(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: horizontalPadding,
-                          vertical: verticalPadding),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(bigBorderRadius),
-                          color: kSecondaryFade1.withOpacity(0.05)),
-                      child: const Column(
-                        children: [
-                          SettingsText(
-                            text: 'Version',
-                            hasDivider: true,
-                          ),
-                          SettingsText(
-                            text: 'Support',
-                            hasDivider: true,
-                          ),
-                          SettingsText(
-                            text: 'Share App',
-                            hasDivider: true,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  VerticalPadding(
-                    child: Container(
-                      padding: EdgeInsets.all(1.h),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(bigBorderRadius),
-                          gradient: kPrimaryGradient),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: horizontalPadding, vertical: textSize),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        height: kAppsize(context).height * 0.09,
+                        margin: EdgeInsets.only(top: verticalPadding),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: horizontalPadding),
                         decoration: BoxDecoration(
                             borderRadius:
                                 BorderRadius.circular(bigBorderRadius),
-                            color: kBackgroundColor),
+                            gradient: kPrimaryGradient),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const Text(
-                              'Remove History Every Month',
+                            Text(
+                              'Get free trial for a week',
+                              style: context.bodyMedium
+                                  .copyWith(color: kTextColorDarkMode),
                             ),
-                            CupertinoSwitch(
-                                value: isSwitched,
-                                thumbColor: kPrimaryColor1,
-                                onChanged: (s) {
-                                  isSwitched = s;
-                                  setState(() {});
-                                })
+                            CupertinoButton(
+                                padding: EdgeInsets.zero,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 5, vertical: 2),
+                                  decoration: BoxDecoration(
+                                      color: kTextColorDarkMode,
+                                      borderRadius:
+                                          BorderRadius.circular(15.sp)),
+                                  child: Text(
+                                    'Upgrade',
+                                    style: context.bodyMedium
+                                        .copyWith(color: kPrimaryColor1),
+                                  ),
+                                ),
+                                onPressed: () {})
                           ],
                         ),
                       ),
-                    ),
+                      VerticalSpacer(
+                        space: 40.h,
+                      ),
+                      const Text(
+                        'About App',
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: horizontalPadding, vertical: 4.h),
+                        margin: EdgeInsets.only(top: smallVerticalPadding),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(24.sp),
+                            color: kSecondaryFade1.withOpacity(0.1)),
+                        child: SettingsText(
+                          text: 'Privacy Policy and terms of use',
+                          onTap: () {
+                            Navigator.restorablePushNamed(
+                                context, PrivacyPolicyScreen.routeName);
+                          },
+                        ),
+                      ),
+                      VerticalSpacer(
+                        space: 40.h,
+                      ),
+                      const Text(
+                        'The Main Ones',
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(
+                            left: horizontalPadding,
+                            right: horizontalPadding,
+                            top: verticalPadding,
+                            bottom: smallVerticalPadding),
+                        margin: EdgeInsets.only(top: smallVerticalPadding),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(24.sp),
+                            color: kSecondaryFade1.withOpacity(0.1)),
+                        child: const Column(
+                          children: [
+                            SettingsText(
+                              text: 'Version',
+                              hasDivider: true,
+                            ),
+                            SettingsText(
+                              text: 'Support',
+                              hasDivider: true,
+                            ),
+                            SettingsText(
+                              text: 'Share App',
+                              hasDivider: true,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.all(1.h),
+                        margin: EdgeInsets.only(top: bigPadding),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30.sp),
+                            gradient: kPrimaryGradient),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: horizontalPadding,
+                              vertical: textSize),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30.sp),
+                              color: kBackgroundColor),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Remove history every month',
+                                style: context.bodySmall,
+                              ),
+                              CupertinoSwitch(
+                                  value: isSwitched,
+                                  thumbColor: kPrimaryColor1,
+                                  onChanged: (s) {
+                                    isSwitched = s;
+                                    setState(() {});
+                                  })
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
+                  const Spacer(),
+                  const AppLogo(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                  )
                 ],
               ),
-              const AppLogo(
-                mainAxisAlignment: MainAxisAlignment.center,
-              )
-            ],
+            ),
           ),
         ),
       ),
@@ -191,21 +205,43 @@ class _SettingsViewState extends State<TranslatorSettingsScreen> {
   }
 }
 
+class HeaderText extends StatelessWidget {
+  const HeaderText({
+    super.key,
+    required this.text,
+  });
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Opacity(
+      opacity: 0.8,
+      child: Text(
+        text,
+        style: context.displayLarge,
+      ),
+    );
+  }
+}
+
 class AppbackButton extends StatelessWidget {
   const AppbackButton({
     super.key,
     this.color,
+    this.onPressed,
   });
   final Color? color;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
     return CupertinoButton(
         padding: EdgeInsets.zero,
-        child: SvgPicture.asset(sBackButton),
-        onPressed: () {
-          Navigator.pop(context);
-        });
+        onPressed: onPressed ??
+            () {
+              Navigator.pop(context);
+            },
+        child: SvgPicture.asset(sBackButton));
   }
 }
 
@@ -233,7 +269,7 @@ class SettingsText extends StatelessWidget {
                 text,
                 style: context.bodyMedium,
               ),
-              HorizontalPadding(child: SvgPicture.asset(sArrowRight)),
+              SvgPicture.asset(sArrowRight),
             ],
           ),
           if (hasDivider!) const AppDivider()

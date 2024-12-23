@@ -7,16 +7,16 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 // const num _figmaDesignHeight = 812;
 // const num _figmaDesignViewPort = 0;
 
-final horizontalPadding = 12.w;
-final verticalPadding = 12.h;
-final largeTextSize = 32.sp;
+final horizontalPadding = 14.w;
+final verticalPadding = 14.h;
+final largeTextSize = 28.sp;
 final mediumTextSize = 18.sp;
 final textSize = 14.sp;
 final smallTextSize = 10.h;
 final smallVerticalPadding = 6.h;
 final smallHorizontalPadding = 6.w;
 final textFieldBorderRadius = 6.w;
-final bigBorderRadius = 26.w;
+final bigBorderRadius = 16.w;
 final bigPadding = 32.sp;
 final buttonHeight = 50.sp;
 

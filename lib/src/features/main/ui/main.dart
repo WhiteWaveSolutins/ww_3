@@ -3,13 +3,14 @@ import 'package:ai_translator/src/features/main/logic/model.dart';
 import 'package:ai_translator/src/features/main/ui/history.dart';
 import 'package:ai_translator/src/features/settings/ui/settings.dart';
 import 'package:ai_translator/src/features/translate/logic/viewmodel.dart';
-import 'package:ai_translator/src/features/translate/ui/camera.dart';
+import 'package:ai_translator/src/features/translate/ui/cam.dart';
 import 'package:ai_translator/src/features/translate/ui/record.dart';
 import 'package:ai_translator/src/shared/utils/assets.dart';
 import 'package:ai_translator/src/shared/utils/size_utils.dart';
 import 'package:ai_translator/src/shared/utils/text_theme.dart';
 import 'package:ai_translator/src/shared/utils/theme.dart';
 import 'package:ai_translator/src/shared/widgets/animated_column_and_row.dart';
+import 'package:ai_translator/src/shared/widgets/buttons.dart';
 import 'package:ai_translator/src/shared/widgets/drop_down.dart';
 import 'package:ai_translator/src/shared/widgets/scaffold.dart';
 import 'package:ai_translator/src/shared/widgets/textfields.dart';
@@ -47,228 +48,283 @@ class _SettingsViewState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return TranslatorScaffold(
-      appBar: CupertinoNavigationBar(
-        leading: Padding(
-          padding: EdgeInsets.only(top: smallVerticalPadding),
-          child: Text(
-            'Welcome Back!',
-            style: context.displayLarge,
-          ),
-        ),
-        trailing: Padding(
-          padding: EdgeInsets.only(bottom: smallVerticalPadding),
-          child: const SettingsButton(),
-        ),
-      ),
-      body: Consumer<RecordingViewModel>(
-        builder: (context, value, child) => Stack(
-          fit: StackFit.expand,
-          children: [
-            if (context
-                .read<HistoryViewmodel>()
-                .historyItemList
-                .histories
-                .isEmpty)
-              if (!value.isActive)
-                Positioned(
-                  bottom: 0,
-                  child: Center(
-                    child: SvgPicture.asset(sMain),
-                  ),
-                ),
-            SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-              child: TranslatorAnimatedColumn(
+    return Consumer<RecordingViewModel>(
+      builder: (context, value, child) => GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: AppBackground(
+          imageBg: sMainBg,
+          child: SafeArea(
+            child: HorizontalPadding(
+              child: Stack(
                 children: [
-                  Container(
-                    height: value.isActive
-                        ? kAppsize(context).height * 0.6
-                        : kAppsize(context).height * 0.3,
-                    padding:
-                        EdgeInsets.symmetric(horizontal: horizontalPadding),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(bigBorderRadius),
-                        color: kSecondaryFade1.withOpacity(0.05)),
-                    child: Stack(
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SwapWidget(
-                              hPadding: 0,
-                              vPadding: 0,
-                            ),
-                            CupertinoTextField(
-                              placeholder: 'Enter the Text...',
-                              controller: value.textEditingController,
-                              placeholderStyle: context.bodyLarge,
-                              maxLines: value.isActive ? 6 : 1,
-                              onEditingComplete: () {
-                                value.translateText(
-                                    isSpeaking: false, canSave: true);
-                              },
-                              onChanged: (s) {
-                                if (s.length > 2) {
-                                  value.isActive = true;
-                                  value.onTextChanged(s, (finalText) {
-                                    value.translateText(
-                                        isSpeaking: false,
-                                        canSave: s.length > 40);
-                                  });
-                                }
-                              },
-                              decoration: const BoxDecoration(border: Border()),
-                            ),
-                            if (value.isActive)
-                              Stack(
-                                children: [
-                                  VerticalPadding(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const AppDivider(),
-                                        if (value.translatedText.isNotEmpty)
-                                          VerticalPadding(
-                                              child: FadingTextWidget(
-                                                  text: value.translatedText))
-                                      ],
-                                    ),
-                                  ),
-                                  if (value.isTranslating)
-                                    const Center(
-                                        child: CircularProgressIndicator())
-                                ],
-                              )
-                          ],
-                        ),
-                        Positioned(
-                            bottom: verticalPadding,
-                            right: 0,
-                            child: Row(
-                              children: [
-                                ActionButton(
-                                  icon: CupertinoIcons.restart,
-                                  onPressed: () {
-                                    value.resetTranslation();
-                                    value.isActive = false;
-                                  },
-                                ),
-                                ActionButton(
-                                    icon: CupertinoIcons.play_fill,
-                                    onPressed: () async {
-                                      await value.playTranslatedText();
-                                    }),
-                              ],
-                            ))
-                      ],
-                    ),
-                  ),
-                  VerticalPadding(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        MainActionButton(
-                          language: "Voice",
-                          onPressed: () {
-                            value.resetTranslation();
-                            Navigator.restorablePushNamed(
-                                context, RecordingScreen.routeName);
-                          },
-                          iconWidget: SvgPicture.asset(sMic),
-                        ),
-                        MainActionButton(
-                          language: "Camera",
-                          onPressed: () {
-                            value.resetTranslation();
-                            Navigator.restorablePushNamed(
-                                context, CameraScreen.routeName);
-                          },
-                          iconWidget: SvgPicture.asset(sCamera),
-                        ),
-                      ],
-                    ),
-                  ),
-                  VerticalPadding(
-                      child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'History',
-                        style: context.displayLarge,
-                      ),
-                      CupertinoButton(
-                        padding: EdgeInsets.zero,
-                        onPressed: () {
-                          value.resetTranslation();
-                          Navigator.restorablePushNamed(
-                              context, HistoryScreen.routeName);
-                        },
-                        child: Text(
-                          'See All',
-                          style: context.bodyMedium,
-                        ),
-                      ),
-                    ],
-                  )),
                   if (context
                       .read<HistoryViewmodel>()
                       .historyItemList
                       .histories
-                      .isNotEmpty)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          width: kAppsize(context).width * 0.55,
-                          child: Column(
-                            children: [
-                              HistoryWidget(
-                                historyItem: context
+                      .isEmpty)
+                    if (!value.isActive)
+                      Positioned(
+                        bottom: 20.h,
+                        left: 0,
+                        right: 0,
+                        child: SvgPicture.asset(
+                          sMain,
+                          fit: BoxFit.fitWidth,
+                        ),
+                      ),
+                  Column(
+                    children: [
+                      const Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          HeaderText(
+                            text: 'Welcome back!',
+                          ),
+                          SettingsButton(),
+                        ],
+                      ),
+                      Expanded(
+                        child: VerticalPadding(
+                          child: SingleChildScrollView(
+                            child: TranslatorAnimatedColumn(
+                              children: [
+                                Container(
+                                  height: value.isActive
+                                      ? kAppsize(context).height * 0.35
+                                      : kAppsize(context).height * 0.2,
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: horizontalPadding,
+                                      vertical: verticalPadding),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(
+                                          bigBorderRadius),
+                                      color: kSecondaryFade1.withOpacity(0.05)),
+                                  child: Stack(
+                                    children: [
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          const SwapWidget(),
+                                          const VerticalSpacer(),
+                                          CupertinoTextField(
+                                            placeholder: 'Enter the Text...',
+                                            controller:
+                                                value.textEditingController,
+                                            placeholderStyle: context.bodyLarge
+                                                .copyWith(
+                                                    color: kTextColor
+                                                        .withOpacity(0.7)),
+                                            maxLines: value.isActive ? 2 : 1,
+                                            onEditingComplete: () {
+                                              FocusScope.of(context).unfocus();
+                                              value.translateText(
+                                                  isSpeaking: false,
+                                                  canSave: true);
+                                            },
+                                            onChanged: (s) {
+                                              if (s.length > 2) {
+                                                value.isActive = true;
+                                                value.onTextChanged(s,
+                                                    (finalText) {
+                                                  value.translateText(
+                                                      isSpeaking: false,
+                                                      canSave: s.length > 40);
+                                                });
+                                              }
+                                            },
+                                            decoration: const BoxDecoration(
+                                                border: Border()),
+                                          ),
+                                          if (value.isActive)
+                                            Stack(
+                                              children: [
+                                                VerticalPadding(
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      const AppDivider(
+                                                        color: kTabFade1,
+                                                      ),
+                                                      if (value
+                                                          .translatedTextAndSpeech
+                                                          .isNotEmpty)
+                                                        VerticalPadding(
+                                                            child: FadingTextWidget(
+                                                                text: value
+                                                                    .translatedTextAndSpeech[0]))
+                                                    ],
+                                                  ),
+                                                ),
+                                                if (value.isTranslating)
+                                                  const Center(
+                                                      child:
+                                                          CircularProgressIndicator())
+                                              ],
+                                            )
+                                        ],
+                                      ),
+                                      Positioned(
+                                          bottom: 0,
+                                          right: 0,
+                                          child: Padding(
+                                            padding: EdgeInsets.only(
+                                                top: verticalPadding),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                AppFabButton(
+                                                  icon: CupertinoIcons.restart,
+                                                  onPressed: () {
+                                                    value.resetTranslation();
+                                                  },
+                                                ),
+                                                AppFabButton(
+                                                  icon:
+                                                      CupertinoIcons.play_fill,
+                                                  onPressed: () async {
+                                                    await value
+                                                        .playTranslatedText();
+                                                  },
+                                                )
+                                              ],
+                                            ),
+                                          ))
+                                    ],
+                                  ),
+                                ),
+                                VerticalPadding(
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      MainActionButton(
+                                        height: 50.h,
+                                        width: 150.w,
+                                        language: "Voice",
+                                        onPressed: () {
+                                          Navigator.restorablePushNamed(context,
+                                              RecordingScreen.routeName);
+                                          value.resetTranslation();
+                                        },
+                                        iconWidget:
+                                            IconBackgroundWidget(svgIcon: sMic),
+                                      ),
+                                      MainActionButton(
+                                        height: 50.h,
+                                        width: 150.w,
+                                        language: "Camera",
+                                        onPressed: () {
+                                          Navigator.restorablePushNamed(context,
+                                              TextRecognizerView.routeName);
+                                          value.resetTranslation();
+                                        },
+                                        iconWidget: const IconBackgroundWidget(
+                                          icon: CupertinoIcons.camera_fill,
+                                          iconColor: kPrimaryColor1,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                VerticalPadding(
+                                    child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const HeaderText(
+                                      text: 'History',
+                                    ),
+                                    CupertinoButton(
+                                      padding: EdgeInsets.zero,
+                                      onPressed: () {
+                                        value.resetTranslation();
+                                        Navigator.restorablePushNamed(
+                                            context, HistoryScreen.routeName);
+                                      },
+                                      child: Opacity(
+                                        opacity: 0.8,
+                                        child: Text(
+                                          'See all',
+                                          style: context.bodyMedium,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )),
+                                if (context
                                     .read<HistoryViewmodel>()
                                     .historyItemList
-                                    .histories[0],
-                              ),
-                              if (context
-                                      .read<HistoryViewmodel>()
-                                      .historyItemList
-                                      .histories
-                                      .length >
-                                  1)
-                                HistoryWidget(
-                                  historyItem: context
-                                      .read<HistoryViewmodel>()
-                                      .historyItemList
-                                      .histories[1],
-                                ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          width: horizontalPadding,
-                        ),
-                        if (context
-                                .read<HistoryViewmodel>()
-                                .historyItemList
-                                .histories
-                                .length >
-                            2)
-                          Expanded(
-                            child: HistoryWidget(
-                              historyItem: context
-                                  .read<HistoryViewmodel>()
-                                  .historyItemList
-                                  .histories[2],
+                                    .histories
+                                    .isNotEmpty)
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      SizedBox(
+                                        width: kAppsize(context).width * 0.55,
+                                        child: Column(
+                                          children: [
+                                            HistoryWidget(
+                                              historyItem: context
+                                                  .read<HistoryViewmodel>()
+                                                  .historyItemList
+                                                  .histories[0],
+                                            ),
+                                            if (context
+                                                    .read<HistoryViewmodel>()
+                                                    .historyItemList
+                                                    .histories
+                                                    .length >
+                                                1)
+                                              HistoryWidget(
+                                                historyItem: context
+                                                    .read<HistoryViewmodel>()
+                                                    .historyItemList
+                                                    .histories[1],
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: horizontalPadding,
+                                      ),
+                                      if (context
+                                              .read<HistoryViewmodel>()
+                                              .historyItemList
+                                              .histories
+                                              .length >
+                                          2)
+                                        Expanded(
+                                          child: HistoryWidget(
+                                            historyItem: context
+                                                .read<HistoryViewmodel>()
+                                                .historyItemList
+                                                .histories[2],
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                              ],
                             ),
                           ),
-                      ],
-                    ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -288,7 +344,9 @@ class SettingsButton extends StatelessWidget {
           Navigator.restorablePushNamed(
               context, TranslatorSettingsScreen.routeName);
         },
-        child: const Icon(CupertinoIcons.settings));
+        child: IconBackgroundWidget(
+          svgIcon: sSettings,
+        ));
   }
 }
 
@@ -477,14 +535,15 @@ class MainActionButton extends StatelessWidget {
     super.key,
     required this.language,
     this.icon,
-    this.hPadding,
+    this.height,
+    this.width,
     this.onPressed,
     this.iconWidget,
   });
 
   final String language;
   final String? icon;
-  final double? hPadding;
+  final double? height, width;
   final VoidCallback? onPressed;
   final Widget? iconWidget;
 
@@ -495,21 +554,24 @@ class MainActionButton extends StatelessWidget {
       padding: EdgeInsets.zero,
       onPressed: onPressed,
       child: Container(
-        height: 45.h,
-        padding: EdgeInsets.symmetric(
-          horizontal: hPadding ?? horizontalPadding,
+        height: height ?? 40.h,
+        width: width ?? 120.w,
+        padding: EdgeInsets.only(
+          left: horizontalPadding,
         ),
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(bigBorderRadius),
-            color: kSecondaryFade1.withOpacity(0.05)),
+            borderRadius: BorderRadius.circular(30.sp),
+            color: kSecondaryFade1.withOpacity(0.15)),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             iconWidget == null ? Text(icon!) : iconWidget!,
-            HorizontalPadding(
-              child: Text(
-                language,
-                style: context.bodySmall,
-              ),
+            HorizontalSpacer(
+              space: smallHorizontalPadding,
+            ),
+            Text(
+              language,
+              style: context.bodySmall.bold,
             ),
           ],
         ),

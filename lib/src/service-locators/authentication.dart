@@ -1,5 +1,5 @@
-import 'package:ai_translator/src/features/authentication/logic/authentication_viewmodel.dart';
-import 'package:ai_translator/src/features/authentication/logic/user_provider.dart';
+import 'package:ai_translator/src/features/authentication/presentation/viewmodel/authentication_viewmodel.dart';
+import 'package:ai_translator/src/features/authentication/presentation/viewmodel/user_provider.dart';
 import 'package:ai_translator/src/service-locators/app.dart';
 
 UserStateProvider get userStateProvider => UserStateProvider();

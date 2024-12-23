@@ -1,4 +1,4 @@
-import 'package:ai_translator/src/core/network/network.dart';
+import 'package:ai_translator/src/core/network/api_client.dart';
 import 'package:ai_translator/src/routes/observer/observer.dart';
 import 'package:ai_translator/src/service-locators/authentication.dart';
 import 'package:ai_translator/src/service-locators/history/history.dart';
@@ -26,5 +26,6 @@ class AppServiceLocator {
     await SettingsServiceLocator.initialize();
     await TransaltorServiceLocator.initialize();
     await HistoryServiceLocator.initialize();
+    await userSettingsController.loadSettings();
   }
 }

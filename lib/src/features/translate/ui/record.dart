@@ -1,12 +1,13 @@
-import 'dart:math';
-
 import 'package:ai_translator/src/features/main/ui/main.dart';
 import 'package:ai_translator/src/features/settings/ui/settings.dart';
 import 'package:ai_translator/src/features/translate/logic/viewmodel.dart';
 import 'package:ai_translator/src/shared/utils/assets.dart';
 import 'package:ai_translator/src/shared/utils/size_utils.dart';
+import 'package:ai_translator/src/shared/utils/text_theme.dart';
 import 'package:ai_translator/src/shared/utils/theme.dart';
+import 'package:ai_translator/src/shared/utils/wave.dart';
 import 'package:ai_translator/src/shared/widgets/bottom_sheet.dart';
+import 'package:ai_translator/src/shared/widgets/buttons.dart';
 import 'package:ai_translator/src/shared/widgets/drop_down.dart';
 import 'package:ai_translator/src/shared/widgets/scaffold.dart';
 import 'package:ai_translator/src/shared/widgets/textfields.dart';
@@ -26,47 +27,57 @@ class RecordingScreen extends StatefulWidget {
 
 class _RecordingScreenState extends State<RecordingScreen>
     with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
+  // late AnimationController _animationController;
 
   @override
   void initState() {
     super.initState();
     context.read<RecordingViewModel>().initializeSpeech();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 1),
-    )..repeat();
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return TranslatorScaffold(
-      appBar: const CupertinoNavigationBar(
-          leading: AppbackButton(), trailing: SettingsButton()),
-      body: Consumer<RecordingViewModel>(
-        builder: (_, value, child) => HorizontalPadding(
-          child: Stack(
+    return AppBackground(
+      imageBg: sMainBg,
+      child: SafeArea(
+          child: VerticalPadding(
+        child: Consumer<RecordingViewModel>(
+          builder: (_, value, child) => Stack(
             children: [
               Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  // Language Selection
-
+                  HorizontalPadding(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        AppbackButton(
+                          onPressed: () {
+                            value.resetTranslation();
+                            Navigator.pop(context);
+                          },
+                        ),
+                        const SettingsButton()
+                      ],
+                    ),
+                  ),
                   // Text Prompt
-                  if (value.translatedText.isEmpty)
+                  if (value.translatedTextAndSpeech.isEmpty)
                     Column(
                       children: [
-                        const SwapWidget(),
-                        FadingTextWidget(text: value.spokenText),
-                        // Wave Animation
+                        VerticalSpacer(
+                          space: verticalPadding,
+                        ),
+                        const HorizontalPadding(child: SwapWidget()),
+                        VerticalSpacer(
+                          space: 50.h,
+                        ),
+                        FadingTextWidget(
+                          text: value.spokenText,
+                          textStyle: context.displayLarge,
+                        ),
                         Padding(
-                          padding: EdgeInsets.only(top: 100.h),
+                          padding: EdgeInsets.only(top: 70.h),
                           child: SizedBox(
                             height: 150.h,
                             child: Stack(
@@ -74,125 +85,94 @@ class _RecordingScreenState extends State<RecordingScreen>
                               alignment: Alignment.center,
                               children: [
                                 if (value.isListening)
-                                  const Positioned(
-                                      bottom: 0, child: Text('Listening....')),
-                                SvgPicture.asset(
-                                  sRecordBackground,
-                                  fit: BoxFit.cover,
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(bottom: 50.h),
-                                  child: AnimatedBuilder(
-                                    animation: _animationController,
-                                    builder: (context, child) {
-                                      return Opacity(
-                                        opacity: 0.1,
-                                        child: CustomPaint(
-                                            painter: WavePainter(
-                                                _animationController.value),
-                                            child: Container()),
-                                      );
-                                    },
-                                  ),
-                                ),
+                                  Positioned(
+                                      top: 0,
+                                      child: Text(
+                                        'Listening....',
+                                        style: context.bodyLarge,
+                                      )),
+                                const AnimatedWave(),
                               ],
                             ),
                           ),
                         ),
                       ],
                     ),
-                  // Pulsing Microphone
                 ],
               ),
-              if (value.translatedText.isEmpty)
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                      margin: EdgeInsets.only(
-                          bottom: kAppsize(context).width * 0.4),
-                      width: 50.h,
-                      height: 50.h,
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: kPrimaryColor1.withOpacity(0.1)),
-                      child: Center(
-                        child: CupertinoButton(
-                          padding: EdgeInsets.zero,
-                          onPressed: () {
-                            if (value.isListening) {
-                              value.stopListening();
-                            } else {
-                              value.startListening(
-                                  targetLanguage: value.translatedLanguage,
-                                  fromLanguage: value.fromLanguage);
-                            }
-                          },
-                          child: value.isTranslating
-                              ? const CircularProgressIndicator()
-                              : ClipRRect(
-                                  borderRadius:
-                                      BorderRadius.circular(bigBorderRadius),
-                                  child: SvgPicture.asset(
-                                    sMicBig,
-                                    colorFilter: ColorFilter.mode(
-                                        value.isListening
-                                            ? kPrimaryColor1
-                                            : kTabFade1,
-                                        BlendMode.color),
-                                  ),
-                                ),
-                        ),
-                      )),
+              Positioned(
+                bottom: 100.h,
+                left: 0,
+                right: 0,
+                child: RippleEffectButton(
+                  isRecording: value.isListening,
+                  isTranslating: value.isTranslating,
+                  onPressed: () {
+                    if (value.isListening) {
+                      value.stopListening();
+                    } else {
+                      value.resetTranslation();
+                      value.startListening(
+                          targetLanguage: value.translatedLanguage,
+                          fromLanguage: value.fromLanguage);
+                    }
+                  },
                 ),
-              if (value.translatedText.isNotEmpty)
-                Column(
-                  children: [
-                    const SwapWidget(),
-                    Container(
-                      margin: EdgeInsets.only(top: 20.h),
-                      padding: EdgeInsets.symmetric(
-                          horizontal: horizontalPadding,
-                          vertical: verticalPadding),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(bigBorderRadius),
-                          color: kSecondaryFade1.withOpacity(0.05)),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              FadingTextWidget(
-                                text: value.spokenText,
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  VerticalPadding(
-                                      child: AppDivider(
-                                    color: kTabFade1.withOpacity(0.3),
-                                  )),
-                                  FadingTextWidget(
-                                    text: value.translatedText,
-                                  ),
-                                ],
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(top: verticalPadding),
-                                child: SizedBox(
-                                  height: 40.h,
+              ),
+              if (value.translatedTextAndSpeech.isNotEmpty)
+                Padding(
+                  padding: EdgeInsets.only(
+                      top: 70.h,
+                      left: horizontalPadding,
+                      right: horizontalPadding),
+                  child: Column(
+                    children: [
+                      const SwapWidget(),
+                      Container(
+                        margin: EdgeInsets.only(top: 20.h),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: horizontalPadding,
+                            vertical: verticalPadding),
+                        decoration: BoxDecoration(
+                            borderRadius:
+                                BorderRadius.circular(bigBorderRadius),
+                            color: kSecondaryFade1.withOpacity(0.05)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                FadingTextWidget(
+                                  text: value.spokenText,
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    VerticalPadding(
+                                        child: AppDivider(
+                                      color: kTabFade1.withOpacity(0.3),
+                                    )),
+                                    FadingTextWidget(
+                                      text: value.translatedTextAndSpeech[0],
+                                    ),
+                                  ],
+                                ),
+                                Padding(
+                                  padding:
+                                      EdgeInsets.only(top: verticalPadding),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
                                     children: [
-                                      ActionButton(
+                                      AppFabButton(
                                         icon: CupertinoIcons.restart,
                                         onPressed: () {
                                           value.resetTranslation();
                                         },
                                       ),
-                                      ActionButton(
+                                      AppFabButton(
                                         icon: CupertinoIcons.play_fill,
                                         onPressed: () async {
                                           await value.playTranslatedText();
@@ -200,19 +180,19 @@ class _RecordingScreenState extends State<RecordingScreen>
                                       )
                                     ],
                                   ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ],
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 )
             ],
           ),
         ),
-      ),
+      )),
     );
   }
 }
@@ -245,52 +225,43 @@ class ActionButton extends StatelessWidget {
 class SwapWidget extends StatelessWidget {
   const SwapWidget({
     super.key,
-    this.hPadding,
-    this.vPadding,
   });
-  final double? hPadding, vPadding;
 
   @override
   Widget build(BuildContext context) {
     return Consumer<RecordingViewModel>(
-      builder: (context, value, child) => Padding(
-        padding: EdgeInsets.symmetric(
-            horizontal: hPadding ?? 18.w, vertical: vPadding ?? 20.h),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            MainActionButton(
-              hPadding: value.inputLang['name']!.length > 8
-                  ? smallHorizontalPadding
-                  : horizontalPadding,
-              language: value.inputLang['name']!,
-              icon: value.inputLang['flag'],
-              onPressed: () {
-                showLanguagePicker(
-                  context,
-                  value,
-                  isInput: true,
-                );
-              },
-            ),
-            SwapIcon(
-              onPressed: () {
-                final outputLang = value.inputLang;
-                final inptLang = value.outputLang;
-                value.setInputLanguage(inptLang);
-                value.setOutputLanguage(outputLang);
-                value.resetTranslation();
-              },
-            ),
-            MainActionButton(
-              language: value.outputLang['name']!,
-              icon: value.outputLang['flag'],
-              onPressed: () {
-                showLanguagePicker(context, value);
-              },
-            ),
-          ],
-        ),
+      builder: (context, value, child) => Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          MainActionButton(
+            language: value.inputLang['name']!,
+            icon: value.inputLang['flag'],
+            onPressed: () {
+              showLanguagePicker(
+                context,
+                value,
+                isInput: true,
+              );
+            },
+          ),
+          SwapIcon(
+            onPressed: () {
+              final outputLang = value.inputLang;
+              final inptLang = value.outputLang;
+              value.setInputLanguage(inptLang);
+              value.setOutputLanguage(outputLang);
+              value.resetTranslation();
+            },
+          ),
+          MainActionButton(
+            language: value.outputLang['name']!,
+            icon: value.outputLang['flag'],
+            onPressed: () {
+              showLanguagePicker(context, value);
+            },
+          ),
+        ],
       ),
     );
   }
@@ -378,52 +349,17 @@ class SwapIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoButton(
-        onPressed: onPressed, child: SvgPicture.asset(sSwap));
-  }
-}
-
-class WavePainter extends CustomPainter {
-  final double animationValue;
-
-  WavePainter(this.animationValue);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final Paint wavePaint = Paint()
-      ..color = CupertinoColors.systemPink
-      ..style = PaintingStyle.fill;
-
-    final Path path = Path();
-    const double waveHeight = 20.0;
-    final double waveLength = size.width / 2;
-
-    path.moveTo(0, size.height / 2);
-
-    for (double i = 0; i <= size.width; i++) {
-      double y = size.height / 2 +
-          sin((i / waveLength * 2 * pi) + (animationValue * 2 * pi)) *
-              waveHeight;
-      path.lineTo(i, y);
-    }
-
-    path.lineTo(size.width, size.height);
-    path.lineTo(0, size.height);
-    path.close();
-
-    canvas.drawPath(path, wavePaint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
+    return AppFabButton(
+      onPressed: onPressed,
+      icon: CupertinoIcons.arrow_right_arrow_left,
+    );
   }
 }
 
 class FadingTextWidget extends StatefulWidget {
   final String text;
-
-  const FadingTextWidget({super.key, required this.text});
+  final TextStyle? textStyle;
+  const FadingTextWidget({super.key, required this.text, this.textStyle});
 
   @override
   State<FadingTextWidget> createState() => _FadingTextWidgetState();
@@ -459,37 +395,42 @@ class _FadingTextWidgetState extends State<FadingTextWidget>
       opacity: _fadeAnimation!,
       child: Text(
         widget.text,
-        style: TextStyle(
-          color: kTabFade1,
-          fontSize: textSize,
-          fontWeight: FontWeight.bold,
-        ),
+        style: widget.textStyle ??
+            TextStyle(
+              color: kTabFade1,
+              fontSize: textSize,
+              fontWeight: FontWeight.bold,
+            ),
         textAlign: TextAlign.start,
       ),
     );
   }
 }
 
-class WaveAnimation extends StatefulWidget {
-  const WaveAnimation({super.key});
+class RippleEffectButton extends StatefulWidget {
+  const RippleEffectButton(
+      {super.key,
+      required this.isTranslating,
+      required this.isRecording,
+      required this.onPressed});
+  final bool isTranslating, isRecording;
+  final VoidCallback onPressed;
 
   @override
-  State<WaveAnimation> createState() => _WaveAnimationState();
+  State<RippleEffectButton> createState() => _RippleEffectButtonState();
 }
 
-class _WaveAnimationState extends State<WaveAnimation>
+class _RippleEffectButtonState extends State<RippleEffectButton>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  late Animation<double> _waveAnimation;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 4),
-    )..repeat(); // Continuous animation
-    _waveAnimation = Tween<double>(begin: 0, end: 100).animate(_controller);
+      duration: const Duration(seconds: 2),
+    )..repeat();
   }
 
   @override
@@ -500,24 +441,56 @@ class _WaveAnimationState extends State<WaveAnimation>
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Positioned.fill(
-          child: AnimatedBuilder(
-            animation: _waveAnimation,
-            builder: (context, child) {
-              return Transform.translate(
-                offset: Offset(0, _waveAnimation.value), // Vertical wave motion
-                child: SvgPicture.asset(
-                  sRecordBackground, // Add your wave.svg file in assets
-                  fit: BoxFit.cover,
-                  alignment: Alignment.center,
-                ),
-              );
-            },
-          ),
-        ),
-      ],
+    return CupertinoButton(
+      onPressed: widget.onPressed,
+      padding: EdgeInsets.zero,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          if (widget.isRecording)
+            for (int i = 0; i < 3; i++)
+              AnimatedBuilder(
+                animation: _controller,
+                builder: (context, child) {
+                  double scale = 1 + (_controller.value * (i + 1) * 0.4);
+                  return Transform.scale(
+                    scale: scale,
+                    child: Container(
+                      width: 50.h,
+                      height: 50.h,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: kPrimaryColor2.withOpacity(
+                          (0.5 - _controller.value).clamp(0.0, 1.0),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+          IconBackgroundWidget(
+            height: 50.h,
+            width: 50.h,
+            hasGradient: true,
+            child: !widget.isTranslating
+                ? Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: SvgPicture.asset(
+                      sMic,
+                      colorFilter: const ColorFilter.mode(
+                          kSecondaryFade1, BlendMode.srcIn),
+                    ),
+                  )
+                : const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: kBackgroundColor,
+                    ),
+                  ),
+          )
+        ],
+      ),
     );
   }
 }

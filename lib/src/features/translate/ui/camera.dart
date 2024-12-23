@@ -23,8 +23,6 @@ import 'package:provider/provider.dart';
 class CameraScreen extends StatefulWidget {
   const CameraScreen({super.key});
 
-  static const routeName = '/camera';
-
   @override
   State<CameraScreen> createState() => _CameraScreenState();
 }
@@ -89,10 +87,7 @@ class _CameraScreenState extends State<CameraScreen> {
                             ),
                             VerticalPadding(
                               padding: 40.h,
-                              child: const SwapWidget(
-                                hPadding: 0,
-                                vPadding: 0,
-                              ),
+                              child: const SwapWidget(),
                             ),
                           ],
                         ),
@@ -151,7 +146,6 @@ class _CameraScreenState extends State<CameraScreen> {
                                       language: value.isPlayingAudio
                                           ? "Playing..."
                                           : "Play Voice",
-                                      hPadding: 0,
                                       onPressed: () {
                                         value.playTranslatedText();
                                       },
@@ -164,7 +158,6 @@ class _CameraScreenState extends State<CameraScreen> {
                                     width: kAppsize(context).width * 0.4,
                                     child: MainActionButton(
                                       language: "New",
-                                      hPadding: 0,
                                       onPressed: () {
                                         _pickImage(value);
                                       },
@@ -225,7 +218,7 @@ class _CameraScreenState extends State<CameraScreen> {
     // Combine all block texts into a single string separated by a delimiter
     final combinedText = _textBlocks.map((block) => block.text).join('||');
     await value.translateText(imageText: combinedText, canSave: true);
-    final translatedText = value.translatedText;
+    final translatedText = value.translatedTextAndSpeech[0];
 
     // Split translated text back into blocks using the delimiter
     final translations = translatedText.split('||').toList();

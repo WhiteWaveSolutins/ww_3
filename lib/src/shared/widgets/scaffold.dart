@@ -1,6 +1,10 @@
+import 'package:ai_translator/src/shared/utils/assets.dart';
+import 'package:ai_translator/src/shared/utils/text_theme.dart';
 import 'package:ai_translator/src/shared/utils/theme.dart';
 import 'package:ai_translator/src/shared/widgets/loaders.dart';
+import 'package:ai_translator/src/shared/widgets/textfields.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_svg/svg.dart';
 
 class TranslatorScaffold extends StatefulWidget {
   const TranslatorScaffold({
@@ -50,44 +54,66 @@ class _TranslatorScaffoldState extends State<TranslatorScaffold> {
   }
 }
 
-// class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-//   const CustomAppBar(
-//       {super.key,
-//       this.title,
-//       this.leading,
-//       this.actions,
-//       this.backgroundColor,
-//       this.centerTitle,
-//       this.isLoading = false});
-//   final Widget? title;
-//   final Widget? leading;
-//   final List<Widget>? actions;
-//   final Color? backgroundColor;
-//   final bool? centerTitle;
-//   final bool isLoading;
+class AppBackground extends StatelessWidget {
+  const AppBackground({
+    super.key,
+    required this.child,
+    this.imageBg,
+  });
+  final Widget child;
+  final String? imageBg;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: double.infinity,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(imageBg ?? sSplash),
+          fit: BoxFit.cover,
+        ),
+      ),
+      child: child,
+    );
+  }
+}
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return AppBar(
-//       backgroundColor: context.background,
-//       title: title != null
-//           ? AbsorbPointer(absorbing: isLoading, child: title)
-//           : null,
-//       leading: leading != null
-//           ? AbsorbPointer(absorbing: isLoading, child: leading)
-//           : null,
-//       actions: actions != null
-//           ? [
-//               ...actions!.map((action) => AbsorbPointer(
-//                     absorbing: isLoading,
-//                     child: action,
-//                   ))
-//             ]
-//           : actions,
-//       centerTitle: centerTitle,
-//     );
-//   }
+class SplashActions extends StatelessWidget {
+  const SplashActions({
+    super.key,
+    required this.text,
+    required this.onTap,
+  });
+  final String text;
+  final VoidCallback onTap;
 
-//   @override
-//   Size get preferredSize => Size.fromHeight(AppBar().preferredSize.height);
-// }
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoButton(
+      onPressed: onTap,
+      padding: EdgeInsets.zero,
+      child: Text(
+        text,
+        style: context.bodySmall,
+      ),
+    );
+  }
+}
+
+class AppLogo extends StatelessWidget {
+  const AppLogo({
+    super.key,
+    this.mainAxisAlignment = MainAxisAlignment.start,
+  });
+  final MainAxisAlignment? mainAxisAlignment;
+
+  @override
+  Widget build(BuildContext context) {
+    return HorizontalPadding(
+      child: Row(
+        mainAxisAlignment: mainAxisAlignment!,
+        children: [SvgPicture.asset(sMic), const Text(' Voice Translate')],
+      ),
+    );
+  }
+}

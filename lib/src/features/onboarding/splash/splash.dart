@@ -1,11 +1,9 @@
 import 'package:ai_translator/src/features/onboarding/onboarding/onboarding.dart';
 import 'package:ai_translator/src/shared/utils/assets.dart';
 import 'package:ai_translator/src/shared/utils/size_utils.dart';
-import 'package:ai_translator/src/shared/utils/text_theme.dart';
 import 'package:ai_translator/src/shared/widgets/scaffold.dart';
 import 'package:ai_translator/src/shared/widgets/textfields.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_svg/svg.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -13,20 +11,14 @@ class SplashScreen extends StatefulWidget {
   static const routeName = '/';
 
   @override
-  State<SplashScreen> createState() => _SettingsViewState();
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SettingsViewState extends State<SplashScreen>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-
+class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(microseconds: 30),
-    )..repeat();
+
     gotoOnboarding();
   }
 
@@ -40,74 +32,58 @@ class _SettingsViewState extends State<SplashScreen>
   }
 
   @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return TranslatorScaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    SvgPicture.asset(sMic),
-                    const Text('Voice Translate')
-                  ],
-                ),
-                Center(
-                  child: Image.asset(
-                    sLogoPng,
-                  ),
-                ),
-              ],
+    return AppBackground(
+      child: SafeArea(
+        child: Stack(
+          children: [
+            Positioned(
+              top: kAppsize(context).height * 0.12,
+              left: 0,
+              right: 0,
+              child: Image.asset(sLogoPng),
             ),
-          ),
-          HorizontalPadding(
-            padding: kAppsize(context).width * 0.2,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              // mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Terms of Use',
-                  style: context.bodySmall,
-                ),
-                Text(
-                  'Terms of Use',
-                  style: context.bodySmall,
-                ),
-                Text(
-                  'Terms of Use',
-                  style: context.bodySmall,
-                )
-              ],
+            const Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: PrivacyPolicyWidgets(),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 }
 
-class AppLogo extends StatelessWidget {
-  const AppLogo({
+class PrivacyPolicyWidgets extends StatelessWidget {
+  const PrivacyPolicyWidgets({
     super.key,
-    this.mainAxisAlignment = MainAxisAlignment.start,
   });
-  final MainAxisAlignment? mainAxisAlignment;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: mainAxisAlignment!,
-      children: [SvgPicture.asset(sMic), const Text('Voice Translate')],
+    return Opacity(
+      opacity: 0.7,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SplashActions(
+            onTap: () {},
+            text: 'Terms of Use',
+          ),
+          const HorizontalSpacer(),
+          SplashActions(
+            onTap: () {},
+            text: 'Privacy Policy',
+          ),
+          const HorizontalSpacer(),
+          SplashActions(
+            onTap: () {},
+            text: 'Restore',
+          ),
+        ],
+      ),
     );
   }
 }
