@@ -24,15 +24,17 @@ class GalleryView extends StatefulWidget {
       this.text,
       required this.onImage,
       required this.onDetectorViewModeChanged,
-      this.customPaint,
-      required this.translations});
+      this.widget,
+      required this.translations,
+      required this.clearTranslations});
 
   final String title;
   final String? text;
   final List<String> translations;
+  final Function() clearTranslations;
   final Function(InputImage inputImage) onImage;
   final Function()? onDetectorViewModeChanged;
-  final CustomPaint? customPaint;
+  final Widget? widget;
 
   @override
   State<GalleryView> createState() => _GalleryViewState();
@@ -43,6 +45,7 @@ class _GalleryViewState extends State<GalleryView> {
   String? path;
   ImagePicker? _imagePicker;
   bool _isCopied = false;
+  bool _showImageOnly = false;
 
   @override
   void initState() {
@@ -57,48 +60,55 @@ class _GalleryViewState extends State<GalleryView> {
   }
 
   Widget _galleryBody() {
-    return AppBackground(
-      child: Stack(
-        children: [
-          SafeArea(
-            child: Row(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                      right: horizontalPadding, top: verticalPadding),
-                  child: AppFabButton(
-                    onPressed: widget.onDetectorViewModeChanged,
-                    icon: CupertinoIcons.camera,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          _image != null
-              ? Consumer<RecordingViewModel>(
-                  builder: (context, value, child) => Padding(
-                    padding: EdgeInsets.only(top: 60.h),
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: <Widget>[
-                        Image.file(
-                          _image!,
-                          fit: BoxFit.fitWidth,
-                        ),
-                        if (widget.customPaint != null) widget.customPaint!,
-                        if (value.isTranslating) const AppLoader()
-                      ],
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _showImageOnly = !_showImageOnly;
+        });
+      },
+      child: AppBackground(
+        child: Stack(
+          children: [
+            SafeArea(
+              child: Row(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(
+                        right: horizontalPadding, top: verticalPadding),
+                    child: AppFabButton(
+                      onPressed: widget.onDetectorViewModeChanged,
+                      icon: CupertinoIcons.camera,
                     ),
                   ),
-                )
-              : Center(
-                  child: Icon(
-                    CupertinoIcons.photo,
-                    size: 200.h,
+                ],
+              ),
+            ),
+            _image != null
+                ? Consumer<RecordingViewModel>(
+                    builder: (context, value, child) => Padding(
+                      padding: EdgeInsets.only(top: 60.h),
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: <Widget>[
+                          Image.file(
+                            _image!,
+                            fit: BoxFit.contain,
+                          ),
+                          if (widget.widget != null) widget.widget!,
+                          if (value.isTranslating) const AppLoader()
+                        ],
+                      ),
+                    ),
+                  )
+                : Center(
+                    child: Icon(
+                      CupertinoIcons.photo,
+                      size: 200.h,
+                    ),
                   ),
-                ),
-          _bottomWidget()
-        ],
+            if (!_showImageOnly) _bottomWidget()
+          ],
+        ),
       ),
     );
   }
@@ -178,6 +188,8 @@ class _GalleryViewState extends State<GalleryView> {
                             CupertinoButton(
                                 child: const Text('From Gallery'),
                                 onPressed: () {
+                                  widget.clearTranslations();
+
                                   value.resetTranslation();
 
                                   _getImage(ImageSource.gallery);
@@ -185,6 +197,8 @@ class _GalleryViewState extends State<GalleryView> {
                             CupertinoButton(
                                 child: const Text('Take a picture'),
                                 onPressed: () {
+                                  widget.clearTranslations();
+
                                   value.resetTranslation();
                                   _getImage(ImageSource.camera);
                                 }),

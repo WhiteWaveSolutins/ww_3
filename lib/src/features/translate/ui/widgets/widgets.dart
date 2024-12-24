@@ -86,74 +86,78 @@ class SwapWidget extends StatelessWidget {
       {bool? isInput = false}) {
     return showAppBottomSheet(context,
         isDismissible: true,
-        child: Column(
-          children: value.languages.map((language) {
-            return CupertinoButton(
-              padding: EdgeInsets.zero,
-              onPressed: () {
-                if (isInput!) {
-                  value.setInputLanguage(language);
-                } else {
-                  value.setOutputLanguage(language);
-                }
-                value.resetTranslation();
-                Navigator.pop(context); // Close the bottom sheet
-              },
-              child: Container(
-                padding: EdgeInsets.all(verticalPadding),
-                decoration: BoxDecoration(
-                    color: kTabFade1.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(bigBorderRadius)),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Text(language['flag']!),
-                        const HorizontalSpacer(),
-                        Text(language['name']!),
-                      ],
-                    ),
-                    CupertinoButton(
-                      onPressed: () {
-                        if (isInput!) {
-                          value.setInputLanguage(language);
-                        } else {
-                          value.setOutputLanguage(language);
-                        }
-                        value.resetTranslation();
-                        Navigator.pop(context); // Close the bottom sheet
-                      },
-                      padding: EdgeInsets.zero,
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                            border: Border.all(
-                              color: kTabFade2,
-                            ),
-                            shape: BoxShape.circle),
-                        child: Container(
-                          height: 25.h,
-                          width: 25.h,
-                          decoration: BoxDecoration(
-                              gradient:
-                                  (value.fromLanguage == language['code']! ||
-                                          value.translatedLanguage ==
-                                              language['code']!)
-                                      ? kPrimaryGradient
-                                      : const LinearGradient(colors: [
-                                          CupertinoColors.transparent,
-                                          CupertinoColors.transparent
-                                        ]),
-                              shape: BoxShape.circle),
-                        ),
+        child: Padding(
+          padding: EdgeInsets.only(top: bigPadding),
+          child: Column(
+            children: value.languages.map((language) {
+              return CupertinoButton(
+                padding: EdgeInsets.zero,
+                onPressed: () {
+                  if (isInput!) {
+                    value.setInputLanguage(language);
+                  } else {
+                    value.setOutputLanguage(language);
+                  }
+                  value.resetTranslation();
+                  Navigator.pop(context); // Close the bottom sheet
+                },
+                child: Container(
+                  padding: EdgeInsets.all(verticalPadding),
+                  margin: EdgeInsets.only(bottom: verticalPadding),
+                  decoration: BoxDecoration(
+                      color: kTabFade1.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(bigBorderRadius)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Text(language['flag']!),
+                          const HorizontalSpacer(),
+                          Text(language['name']!),
+                        ],
                       ),
-                    )
-                  ],
+                      CupertinoButton(
+                        onPressed: () {
+                          if (isInput!) {
+                            value.setInputLanguage(language);
+                          } else {
+                            value.setOutputLanguage(language);
+                          }
+                          value.resetTranslation();
+                          Navigator.pop(context); // Close the bottom sheet
+                        },
+                        padding: EdgeInsets.zero,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                color: kTabFade2,
+                              ),
+                              shape: BoxShape.circle),
+                          child: Container(
+                            height: 25.h,
+                            width: 25.h,
+                            decoration: BoxDecoration(
+                                gradient:
+                                    (value.fromLanguage == language['code']! ||
+                                            value.translatedLanguage ==
+                                                language['code']!)
+                                        ? kPrimaryGradient
+                                        : const LinearGradient(colors: [
+                                            CupertinoColors.transparent,
+                                            CupertinoColors.transparent
+                                          ]),
+                                shape: BoxShape.circle),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-            );
-          }).toList(),
+              );
+            }).toList(),
+          ),
         ));
   }
 }

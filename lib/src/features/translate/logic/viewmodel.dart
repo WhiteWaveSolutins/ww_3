@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:ai_translator/src/features/main/presentation/viewmodel/history_viewmodel.dart';
 import 'package:ai_translator/src/features/main/data/model.dart';
@@ -161,6 +162,7 @@ class RecordingViewModel extends DisposableChangeNotifier {
       try {
         _translatedTextAndSpeech =
             await _apiService.translateText(text, translatedLanguage);
+        log('Translated text to speech is:::${_translatedTextAndSpeech.toString()}');
       } catch (e) {
         debugPrint("Translation Error: $e");
       } finally {

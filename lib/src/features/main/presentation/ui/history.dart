@@ -1,9 +1,8 @@
-import 'package:ai_translator/src/features/main/presentation/viewmodel/history_viewmodel.dart';
 import 'package:ai_translator/src/features/main/presentation/ui/widgets/widgets.dart';
+import 'package:ai_translator/src/features/main/presentation/viewmodel/history_viewmodel.dart';
 import 'package:ai_translator/src/features/settings/ui/settings.dart';
 import 'package:ai_translator/src/shared/utils/assets.dart';
 import 'package:ai_translator/src/shared/utils/size_utils.dart';
-import 'package:ai_translator/src/shared/utils/text_theme.dart';
 import 'package:ai_translator/src/shared/widgets/animated_column_and_row.dart';
 import 'package:ai_translator/src/shared/widgets/scaffold.dart';
 import 'package:ai_translator/src/shared/widgets/textfields.dart';
@@ -30,18 +29,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Consumer<HistoryViewmodel>(
-      builder: (context, value, child) => TranslatorScaffold(
-        appBar: CupertinoNavigationBar(
-          leading: const AppbackButton(),
-          middle: Text(
-            'History',
-            style: context.displayLarge,
-          ),
-          trailing: const SettingsButton(),
-        ),
-        body: AppBackground(
-          imageBg: sMainBg,
-          child: SafeArea(
+      builder: (context, value, child) => AppBackground(
+        imageBg: sMainBg,
+        child: SafeArea(
+          child: VerticalPadding(
             child: HorizontalPadding(
               child: Column(
                 children: [
@@ -60,10 +51,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       padding: EdgeInsets.symmetric(
                           horizontal: horizontalPadding,
                           vertical: verticalPadding),
-                      child: (value.historyItemList.histories.isEmpty)
+                      child: value.getHistoryItem().histories.isNotEmpty
                           ? TranslatorAnimatedColumn(
                               children: [
-                                ...value.historyItemList.histories
+                                ...value
+                                    .getHistoryItem()
+                                    .histories
                                     .map((e) => HistoryWidget(
                                           historyItem: e,
                                           isHistory: true,

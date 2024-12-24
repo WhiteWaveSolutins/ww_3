@@ -5,8 +5,8 @@ import 'package:ai_translator/src/shared/utils/disposable_change_notifier.dart';
 class HistoryViewmodel extends DisposableChangeNotifier {
   HistoryItemList historyItemList = HistoryItemList(histories: []);
 
-  getHistoryItem() {
-    historyItemList = historyRepo.getTranslationHistory();
+  HistoryItemList getHistoryItem() {
+    return historyItemList = historyRepo.getTranslationHistory();
   }
 
   deleteHistoryItem(HistoryItem item) {

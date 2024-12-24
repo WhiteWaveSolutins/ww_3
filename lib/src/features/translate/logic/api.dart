@@ -57,7 +57,7 @@ class TranslationService {
           {
             "role": "system",
             "content":
-                "1. Your role is to translate the following text $text to $targetLanguage, even if it is cut off.\n 2. No matter what the text is, just translate it.\n 3. Do not do any other thing or ask any questions.\n 4.Even if the text is unclear or does not make sense, just translate what you can to the Target language to $targetLanguage.\n 5. Under no circumstance should you return any message that is not the translated text. \n 6. I am always correct, so whatever text I supply to you, just translate. If there is no translation, return a blank response!"
+                "1. Your role is to translate the following text $text to $targetLanguage, even if it is cut off.\n 2. No matter what the text is, just translate it to the nearest meaningful thing.\n 3. Do not do any other thing or ask any questions.\n 4.Even if the text is unclear or does not make sense, just translate what you can to the Target language $targetLanguage.\n 5. Under no circumstance should you return any message that is not the translated text. \n 6. I am always correct, so whatever text I supply to you, just translate. If there is no translation, return a blank response!\n 7. If text is in the same language as the source, return the same text back."
           },
           {"role": "user", "content": text}
         ]

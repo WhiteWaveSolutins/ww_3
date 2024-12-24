@@ -262,7 +262,7 @@ class _MainBodyWidget extends StatelessWidget {
               ),
               if (context
                   .read<HistoryViewmodel>()
-                  .historyItemList
+                  .getHistoryItem()
                   .histories
                   .isNotEmpty)
                 Row(
@@ -274,22 +274,22 @@ class _MainBodyWidget extends StatelessWidget {
                       child: Column(
                         children: [
                           HistoryWidget(
-                            historyItem: context
+                            historyItem: (context
                                 .read<HistoryViewmodel>()
-                                .historyItemList
-                                .histories[0],
+                                .getHistoryItem()
+                                .histories)[0],
                           ),
                           if (context
                                   .read<HistoryViewmodel>()
-                                  .historyItemList
+                                  .getHistoryItem()
                                   .histories
                                   .length >
                               1)
                             HistoryWidget(
-                              historyItem: context
+                              historyItem: (context
                                   .read<HistoryViewmodel>()
-                                  .historyItemList
-                                  .histories[1],
+                                  .getHistoryItem()
+                                  .histories)[1],
                             ),
                         ],
                       ),
@@ -299,7 +299,7 @@ class _MainBodyWidget extends StatelessWidget {
                     ),
                     if (context
                             .read<HistoryViewmodel>()
-                            .historyItemList
+                            .getHistoryItem()
                             .histories
                             .length >
                         2)
@@ -307,7 +307,7 @@ class _MainBodyWidget extends StatelessWidget {
                         child: HistoryWidget(
                           historyItem: context
                               .read<HistoryViewmodel>()
-                              .historyItemList
+                              .getHistoryItem()
                               .histories[2],
                         ),
                       ),

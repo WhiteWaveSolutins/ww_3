@@ -3,8 +3,6 @@ import 'package:ai_translator/src/shared/utils/route.dart';
 import 'package:ai_translator/src/shared/utils/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MyApp extends StatelessWidget {
@@ -22,18 +20,7 @@ class MyApp extends StatelessWidget {
           return CupertinoApp(
             debugShowCheckedModeBanner: false,
             restorationScopeId: 'app',
-            localizationsDelegates: const [
-              AppLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            supportedLocales: const [
-              Locale('en', ''),
-            ],
             theme: translatorLightTheme,
-            onGenerateTitle: (BuildContext context) =>
-                AppLocalizations.of(context)!.appTitle,
             onGenerateRoute: (RouteSettings routeSettings) {
               return routeConfig(routeSettings, context);
             },

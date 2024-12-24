@@ -112,6 +112,15 @@ class HistoryWidget extends StatelessWidget {
                   ),
               ],
             ),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: AppFabButton(
+                icon: CupertinoIcons.play_fill,
+                onPressed: () async {
+                  await value.playTranslatedText();
+                },
+              ),
+            )
           ],
         ),
       ),

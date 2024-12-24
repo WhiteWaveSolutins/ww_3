@@ -20,15 +20,19 @@ class DetectorView extends StatefulWidget {
     this.onDetectorViewModeChanged,
     this.onCameraLensDirectionChanged,
     required this.translations,
+    this.widget,
+    required this.clearTranslations,
   });
 
   final String title;
   final CustomPaint? customPaint;
+  final Widget? widget;
   final String? text;
   final List<String> translations;
   final DetectorViewMode initialDetectionMode;
   final Function(InputImage inputImage) onImage;
   final Function()? onCameraFeedReady;
+  final Function() clearTranslations;
   final Function(DetectorViewMode mode)? onDetectorViewModeChanged;
   final Function(CameraLensDirection direction)? onCameraLensDirectionChanged;
   final CameraLensDirection initialCameraLensDirection;
@@ -60,10 +64,11 @@ class _DetectorViewState extends State<DetectorView> {
           )
         : GalleryView(
             title: widget.title,
+            clearTranslations: widget.clearTranslations,
             translations: widget.translations,
             text: widget.text,
             onImage: widget.onImage,
-            customPaint: widget.customPaint,
+            widget: widget.widget,
             onDetectorViewModeChanged: _onDetectorViewModeChanged);
   }
 
