@@ -30,8 +30,6 @@ class TextToSpeechService {
     } else {
       await player.setFilePath(path);
       await player.play();
-// await player.pause();
-// await player.seek(Duration(seconds: 10));
       await player.setSpeed(0.1);
       await player.setVolume(1.0);
       await player.stop();

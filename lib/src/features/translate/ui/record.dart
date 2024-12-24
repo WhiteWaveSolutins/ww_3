@@ -175,7 +175,9 @@ class _RecordingScreenState extends State<RecordingScreen>
                                       AppFabButton(
                                         icon: CupertinoIcons.play_fill,
                                         onPressed: () async {
-                                          await value.playTranslatedText();
+                                          await value.playTranslatedText(
+                                              textAndSound: value
+                                                  .translatedTextAndSpeech);
                                         },
                                       )
                                     ],

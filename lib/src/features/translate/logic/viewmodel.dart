@@ -182,15 +182,15 @@ class RecordingViewModel extends DisposableChangeNotifier {
     }
   }
 
-  Future<void> playTranslatedText() async {
+  Future<void> playTranslatedText({required List<String> textAndSound}) async {
     if (_isPlayingAudio) {
-      stopPlayingTranslatedText();
+      stopPlayingTranslatedText(textAndSound: textAndSound);
+      _isPlayingAudio = false;
     } else {
-      if (_translatedTextAndSpeech.isNotEmpty &&
-          _translatedTextAndSpeech.length > 1) {
+      if (textAndSound.isNotEmpty && textAndSound.length > 1) {
         isPlayingAudio = true;
-        final s = await _ttsService.playAudio(_translatedTextAndSpeech[1],
-            stopPlaying: false);
+        final s =
+            await _ttsService.playAudio(textAndSound[1], stopPlaying: false);
         await Future.delayed(s, () {
           isPlayingAudio = false;
         });
@@ -198,9 +198,9 @@ class RecordingViewModel extends DisposableChangeNotifier {
     }
   }
 
-  Future<void> stopPlayingTranslatedText() async {
-    final s = await _ttsService.playAudio(_translatedTextAndSpeech[1],
-        stopPlaying: true);
+  Future<void> stopPlayingTranslatedText(
+      {required List<String> textAndSound}) async {
+    final s = await _ttsService.playAudio(textAndSound[1], stopPlaying: true);
     await Future.delayed(s, () {
       isPlayingAudio = false;
     });

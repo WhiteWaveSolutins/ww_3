@@ -95,21 +95,22 @@ class HistoryWidget extends StatelessWidget {
                 const VerticalSpacer(),
                 Text(historyItem.word),
                 if (isHistory!)
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      VerticalPadding(
-                          child: AppDivider(
-                        color: kTabFade1.withOpacity(0.3),
-                      )),
-                      Text(
-                        value.outputLang['flag']!,
-                        style: context.displayLarge,
-                      ),
-                      const VerticalSpacer(),
-                      Text(historyItem.translations[0]),
-                    ],
-                  ),
+                  if (historyItem.translations.isNotEmpty)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        VerticalPadding(
+                            child: AppDivider(
+                          color: kTabFade1.withOpacity(0.3),
+                        )),
+                        Text(
+                          value.outputLang['flag']!,
+                          style: context.displayLarge,
+                        ),
+                        const VerticalSpacer(),
+                        Text(historyItem.translations[0]),
+                      ],
+                    ),
               ],
             ),
             Align(
@@ -117,7 +118,8 @@ class HistoryWidget extends StatelessWidget {
               child: AppFabButton(
                 icon: CupertinoIcons.play_fill,
                 onPressed: () async {
-                  await value.playTranslatedText();
+                  await value.playTranslatedText(
+                      textAndSound: historyItem.translations);
                 },
               ),
             )

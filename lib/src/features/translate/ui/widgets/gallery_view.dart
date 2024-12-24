@@ -175,7 +175,9 @@ class _GalleryViewState extends State<GalleryView> {
                                     onPressed: value.isPlayingAudio
                                         ? null
                                         : () {
-                                            value.playTranslatedText();
+                                            value.playTranslatedText(
+                                                textAndSound: value
+                                                    .translatedTextAndSpeech);
                                           },
                                     iconWidget:
                                         IconBackgroundWidget(svgIcon: sMic),

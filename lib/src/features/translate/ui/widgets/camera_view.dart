@@ -203,7 +203,9 @@ class _CameraViewState extends State<CameraView> {
                                     onPressed: value.isPlayingAudio
                                         ? null
                                         : () {
-                                            value.playTranslatedText();
+                                            value.playTranslatedText(
+                                                textAndSound: value
+                                                    .translatedTextAndSpeech);
                                           },
                                     iconWidget:
                                         IconBackgroundWidget(svgIcon: sMic),
