@@ -1,6 +1,5 @@
 import 'package:ai_translator/src/features/translate/logic/viewmodel.dart';
 import 'package:ai_translator/src/features/translate/ui/widgets/text_detector_painter.dart';
-import 'package:ai_translator/src/service-locators/app.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
@@ -61,10 +60,10 @@ class _TextRecognizerViewState extends State<TextRecognizerView> {
     if (inputImage.metadata?.size != null &&
         inputImage.metadata?.rotation != null) {
       _textBlocks = recognizedText.blocks;
-      await translateBlocksOfImage(serviceLocator<RecordingViewModel>());
+      // await translateBlocksOfImage(serviceLocator<RecordingViewModel>());
       final painter = TextRecognizerPainter(
         recognizedText.blocks,
-        _translations,
+        recognizedText.text.split(' '),
         inputImage.metadata!.size,
         inputImage.metadata!.rotation,
         _cameraLensDirection,
@@ -73,9 +72,13 @@ class _TextRecognizerViewState extends State<TextRecognizerView> {
     } else {
       // _text = 'Recognized text:\n\n${recognizedText.text}';
       _textBlocks = recognizedText.blocks;
-      await translateBlocksOfImage(serviceLocator<RecordingViewModel>());
+      // await translateBlocksOfImage(serviceLocator<RecordingViewModel>());
 
-      final painter = BoundingRectPainter(_textBlocks, _translations);
+      final painter = BoundingTextRecognizer(
+          recognizedText.blocks,
+          recognizedText.text.split(' '),
+          inputImage.metadata?.size ??
+              const Size(double.infinity, double.infinity));
       _customPaint = CustomPaint(painter: painter);
     }
     _isBusy = false;

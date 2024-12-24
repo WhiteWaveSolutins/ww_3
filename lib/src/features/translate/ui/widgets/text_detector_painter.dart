@@ -3,11 +3,10 @@ import 'dart:ui' as ui;
 import 'dart:ui';
 
 import 'package:ai_translator/src/features/translate/ui/widgets/coordinates_translator.dart';
-import 'package:ai_translator/src/shared/utils/size_utils.dart';
 import 'package:ai_translator/src/shared/utils/theme.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 
 class TextRecognizerPainter extends CustomPainter {
@@ -30,7 +29,7 @@ class TextRecognizerPainter extends CustomPainter {
     final Paint paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3.0
-      ..color = CupertinoColors.systemGrey6;
+      ..color = CupertinoColors.transparent;
 
     final Paint background = Paint()..color = const Color(0x99000000);
 
@@ -38,10 +37,14 @@ class TextRecognizerPainter extends CustomPainter {
       final ParagraphBuilder builder = ParagraphBuilder(
         ParagraphStyle(
             textAlign: TextAlign.left,
-            fontSize: 10,
+            fontSize: 14.sp,
             textDirection: TextDirection.ltr),
       );
-      builder.pushStyle(ui.TextStyle(color: kTabFade1, background: background));
+      builder.pushStyle(ui.TextStyle(
+        color: kTabFade1,
+        background: background,
+        fontSize: 14.sp,
+      ));
       builder.addText(textBlock.text);
       builder.pop();
 
@@ -187,69 +190,72 @@ class TextRecognizerPainter extends CustomPainter {
   }
 }
 
-class BoundingRectPainter extends CustomPainter {
-  BoundingRectPainter(this.textBlocks, this.translatedTexts);
+class BoundingTextRecognizer extends CustomPainter {
+  BoundingTextRecognizer(
+    this.blocks,
+    this.translatedTexts,
+    this.imageSize,
+  );
 
-  final List<TextBlock> textBlocks;
+  final List<TextBlock> blocks;
   final List<String> translatedTexts;
+  final Size imageSize;
 
   @override
   void paint(Canvas canvas, Size size) {
-    if (textBlocks.isEmpty || translatedTexts.isEmpty) return;
-
-    final Paint rectPaint = Paint()
+    final Paint paint = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0
-      ..color = CupertinoColors.systemGrey;
+      ..strokeWidth = 3.0
+      ..color = CupertinoColors.systemGrey6;
 
-    final Paint textBackgroundPaint = Paint()..color = kTabFade1;
+    final Paint background = Paint()..color = const Color(0x99000000);
 
-    final textStyle = ui.TextStyle(
-      color: kBackgroundColor,
-      background: textBackgroundPaint,
-      fontSize: mediumTextSize,
-      fontFamily: GoogleFonts.aBeeZee().fontFamily,
-    );
+    for (int i = 0; i < blocks.length; i++) {
+      final textBlock = blocks[i];
+      final translatedText = translatedTexts[i];
 
-    // Calculate a unified bounding rectangle that encompasses all textBlocks
-    double minX = double.infinity;
-    double minY = double.infinity;
-    double maxX = double.negativeInfinity;
-    double maxY = double.negativeInfinity;
+      // Create a ParagraphBuilder to add the translated text
+      final ParagraphBuilder builder = ParagraphBuilder(
+        ParagraphStyle(
+            textAlign: TextAlign.left,
+            fontSize: 14.sp,
+            textDirection: TextDirection.ltr),
+      );
+      builder.pushStyle(ui.TextStyle(
+        color: kTabFade1,
+        background: background,
+        fontSize: 14.sp,
+      ));
+      builder.addText(translatedText);
+      builder.pop();
 
-    for (final block in textBlocks) {
-      final rect = block.boundingBox;
-      minX = rect.left < minX ? rect.left : minX;
-      minY = rect.top < minY ? rect.top : minY;
-      maxX = rect.right > maxX ? rect.right : maxX;
-      maxY = rect.bottom > maxY ? rect.bottom : maxY;
+      // Translate the bounding box coordinates
+      final left = textBlock.boundingBox.left / imageSize.width * size.width;
+      final top = textBlock.boundingBox.top / imageSize.height * size.height;
+      final right = textBlock.boundingBox.right / imageSize.width * size.width;
+      final bottom =
+          textBlock.boundingBox.bottom / imageSize.height * size.height;
+
+      // Draw the bounding box around the text block
+      canvas.drawRect(
+        Rect.fromLTRB(left, top, right, bottom),
+        paint,
+      );
+
+      // Draw the translated text inside the bounding box
+      final Paragraph paragraph = builder.build()
+        ..layout(ParagraphConstraints(width: (right - left).abs()));
+
+      // Position the text inside the bounding box
+      canvas.drawParagraph(
+        paragraph,
+        Offset(left, top),
+      );
     }
-
-    // Draw the unified bounding rectangle
-    final Rect unifiedRect = Rect.fromLTRB(minX, minY, maxX, maxY);
-    canvas.drawRect(unifiedRect, rectPaint);
-
-    // Combine all translated texts into a single string
-    final String combinedText = translatedTexts.join('\n');
-
-    // Draw the combined text inside the unified bounding rectangle
-    final ParagraphBuilder paragraphBuilder = ParagraphBuilder(
-      ParagraphStyle(
-        textAlign: TextAlign.left,
-        textDirection: TextDirection.ltr,
-      ),
-    )
-      ..pushStyle(textStyle)
-      ..addText(combinedText);
-
-    final Paragraph paragraph = paragraphBuilder.build()
-      ..layout(ParagraphConstraints(width: unifiedRect.width));
-
-    canvas.drawParagraph(paragraph, Offset(unifiedRect.left, unifiedRect.top));
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return false;
+  bool shouldRepaint(TextRecognizerPainter oldDelegate) {
+    return oldDelegate.translatedTexts != translatedTexts;
   }
 }
