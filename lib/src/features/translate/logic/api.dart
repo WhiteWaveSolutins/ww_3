@@ -6,6 +6,7 @@ import 'package:ai_translator/src/api_key.dart';
 import 'package:ai_translator/src/models/auth/response/openai.dart';
 import 'package:ai_translator/src/shared/utils/strings.dart';
 import 'package:dart_openai/dart_openai.dart';
+import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:path_provider/path_provider.dart';
@@ -39,42 +40,59 @@ class TranslationService {
     }
   }
 
-  Future<List<String>> translateText(String text, String targetLanguage) async {
+  Future<Either<String, List<String>>> translateText(
+      String text, String targetLanguage) async {
     const url = 'https://api.openai.com/v1/chat/completions';
 
-    debugPrint('These are the requests:::: $kApiKey,$text, $targetLanguage');
+    debugPrint('These are the requests:::: $kApiKey, $text, $targetLanguage');
 
-    final response = await _dio.post(
-      url,
-      options: Options(
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $kApiKey',
-        },
-      ),
-      data: jsonEncode({
-        "model": "gpt-4",
-        "messages": [
-          {"role": "system", "content": prompt(text, targetLanguage)},
-          {"role": "user", "content": text}
-        ]
-      }),
-    );
+    try {
+      final response = await _dio.post(
+        url,
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $kApiKey',
+          },
+        ),
+        data: jsonEncode({
+          "model": "gpt-4",
+          "messages": [
+            {"role": "system", "content": prompt(text, targetLanguage)},
+            {"role": "user", "content": text}
+          ]
+        }),
+      );
 
-    if (response.statusCode == 200) {
-      debugPrint("This is the data:::${response.data}");
-      final data = OpenAIResponse.fromJson(response.data);
-      debugPrint('Open AI RESPONSE$data');
-      final res = data.choices[0].message.content;
-      final speech = await getSpeech(res);
-      return [res, speech];
-    } else {
-      throw Exception('Failed to translate text');
+      if (response.statusCode == 200) {
+        debugPrint("This is the data:::${response.data}");
+        final data = OpenAIResponse.fromJson(response.data);
+        debugPrint('Open AI RESPONSE: $data');
+
+        final res = data.choices[0].message.content;
+
+        // Check if `res` is empty
+        if (res.trim().isEmpty) {
+          return const Left('Translation result is empty.');
+        }
+
+        // Proceed with speech generation if `res` is not empty
+        final speech = await _getSpeech(res);
+
+        return Right([res, speech]); // Return the list of strings on success
+      } else {
+        final errorMessage =
+            'Failed to translate text: ${response.statusMessage}';
+        return Left(errorMessage); // Return error message on failure
+      }
+    } catch (e) {
+      final errorMessage = 'An error occurred: ${e.toString()}';
+      return Left(errorMessage); // Return error message on exception
     }
   }
 }
 
-Future<String> getSpeech(String text) async {
+Future<String> _getSpeech(String text) async {
   OpenAI.apiKey = kApiKey;
   Directory appDocDirectory = await getApplicationDocumentsDirectory();
 

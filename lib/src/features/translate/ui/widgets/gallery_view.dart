@@ -6,6 +6,7 @@ import 'package:ai_translator/src/features/translate/logic/viewmodel.dart';
 import 'package:ai_translator/src/service-locators/app.dart';
 import 'package:ai_translator/src/shared/utils/assets.dart';
 import 'package:ai_translator/src/shared/utils/size_utils.dart';
+import 'package:ai_translator/src/shared/utils/text_theme.dart';
 import 'package:ai_translator/src/shared/utils/theme.dart';
 import 'package:ai_translator/src/shared/widgets/buttons.dart';
 import 'package:ai_translator/src/shared/widgets/loaders.dart';
@@ -78,7 +79,7 @@ class _GalleryViewState extends State<GalleryView> {
                       right: horizontalPadding),
                   child: _backButton()
 
-                  // AppFabButton(
+                  //     AppFabButton(
                   //   onPressed: widget.onDetectorViewModeChanged,
                   //   icon: CupertinoIcons.camera,
                   // ),
@@ -96,7 +97,16 @@ class _GalleryViewState extends State<GalleryView> {
                             fit: BoxFit.contain,
                           ),
                           if (widget.widget != null) widget.widget!,
-                          if (value.isTranslating) const AppLoader()
+                          if (value.isTranslating) const AppLoader(),
+                          if (value.errorMessage.isNotEmpty)
+                            Container(
+                              color: kBackgroundColor.withOpacity(0.2),
+                              child: Center(
+                                  child: Text(
+                                value.errorMessage,
+                                style: context.displayLarge,
+                              )),
+                            )
                         ],
                       ),
                     ),
@@ -107,18 +117,14 @@ class _GalleryViewState extends State<GalleryView> {
                       size: 200.h,
                     ),
                   ),
-            if (!_showImageOnly) _bottomWidget()
+            if (!_showImageOnly) _bottomWidget(),
           ],
         ),
       ),
     );
   }
 
-  Widget _backButton() => Positioned(
-      top: 40.h,
-      left: horizontalPadding,
-      right: horizontalPadding,
-      child: SizedBox(
+  Widget _backButton() => SizedBox(
         width: kAppsize(context).width,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -132,7 +138,7 @@ class _GalleryViewState extends State<GalleryView> {
             const SettingsButton(),
           ],
         ),
-      ));
+      );
 
   Widget _bottomWidget() => Positioned(
       bottom: 0,

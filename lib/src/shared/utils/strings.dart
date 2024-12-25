@@ -114,12 +114,12 @@ final supportedLanguages = [
   {'name': 'Zulu', 'code': 'zu', 'flag': '🇿🇦'},
 ];
 
-String prompt(text, targetLanguage) => '''
-- Your role is to translate the given text $text into $targetLanguage. 
+String prompt(String text, String targetLanguage) => '''
+- Your role is to translate the given text "$text" into $targetLanguage.
 - Always translate, even if the text is incomplete, unclear, or nonsensical.
+- If the text cannot be translated meaningfully as a whole, translate each letter or character literally into its equivalent in $targetLanguage, retaining any special characters or accents as much as possible.
 - Do not perform any actions other than translating. Do not ask questions or provide explanations.
-- If the text cannot be translated meaningfully, return a blank response.
 - If the text is already in the target language, return it unchanged.
-- Under no circumstances should you return anything other than the translated text or the blank response.
+- Under no circumstances should you return anything other than the translated text or the literal character translation.
 - Follow these rules strictly, and always ensure the response is in $targetLanguage only.
 ''';

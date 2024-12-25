@@ -27,10 +27,14 @@ class RecordingViewModel extends DisposableChangeNotifier {
   bool _isListening = false;
   bool _isTranslating = false;
   String _spokenText = '';
-  List<String> _translatedTextAndSpeech = [];
+
   bool _speechEnabled = false;
 
   bool _isPlayingAudio = false;
+
+  List<String> _translatedTextAndSpeech = [];
+
+  String errorMessage = '';
 
   List<HistoryItem> historyItems = [];
 
@@ -146,10 +150,11 @@ class RecordingViewModel extends DisposableChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> translateText(
-      {bool? isSpeaking = false,
-      bool? canSave = false,
-      String? imageText = ''}) async {
+  Future<void> translateText({
+    bool? isSpeaking = false,
+    bool? canSave = false,
+    String? imageText = '',
+  }) async {
     if (imageText!.isNotEmpty ||
         _spokenText.isNotEmpty ||
         textEditingController.text.trim().isNotEmpty) {
@@ -161,19 +166,32 @@ class RecordingViewModel extends DisposableChangeNotifier {
               : textEditingController.text.trim();
 
       try {
-        _translatedTextAndSpeech =
+        final result =
             await _apiService.translateText(text, translatedLanguage);
-        log('Translated text to speech is:::${_translatedTextAndSpeech.toString()}');
+
+        result.fold(
+          (error) {
+            log("Translation Error: $error");
+            errorMessage = error;
+          },
+          (translations) {
+            _translatedTextAndSpeech = translations;
+            log('Translated text to speech is:::${_translatedTextAndSpeech.toString()}');
+          },
+        );
       } catch (e) {
-        debugPrint("Translation Error: $e");
+        errorMessage = 'Something went wrong';
+        debugPrint("Unexpected Error: $e");
       } finally {
         isTranslating = false;
+
         final historyItem = HistoryItem(
           countries: [fromLanguage, translatedLanguage],
           word: text,
           date: DateTime.now().toString(),
           translations: _translatedTextAndSpeech,
         );
+
         if (canSave!) {
           historyItems.add(historyItem);
           serviceLocator<HistoryViewmodel>()
@@ -236,6 +254,7 @@ class RecordingViewModel extends DisposableChangeNotifier {
 
   void resetTranslation() {
     _spokenText = '';
+    errorMessage = '';
     _translatedTextAndSpeech = [];
     textEditingController.text = '';
     _isActive = false;
