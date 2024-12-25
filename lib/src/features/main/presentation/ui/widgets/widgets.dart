@@ -51,7 +51,13 @@ class HistoryWidget extends StatelessWidget {
     return Consumer<RecordingViewModel>(
       builder: (context, value, child) => Consumer<HistoryViewmodel>(
         builder: (__, viewmodel, _) => GestureDetector(
-          onTap: () => viewmodel.toggleMenu(viewmodel.emptyHistoryItem),
+          onTap: () {
+            if (isHistory!) {
+              showHistoryItemSheet(context, value, historyItem);
+            }
+
+            viewmodel.toggleMenu(viewmodel.emptyHistoryItem);
+          },
           child: Container(
             margin: EdgeInsets.only(bottom: verticalPadding),
             padding: EdgeInsets.symmetric(

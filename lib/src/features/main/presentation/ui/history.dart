@@ -48,9 +48,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   ),
                   Expanded(
                     child: SingleChildScrollView(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: horizontalPadding,
-                          vertical: verticalPadding),
+                      padding: EdgeInsets.symmetric(vertical: verticalPadding),
                       child: value.getHistoryItem().histories.isNotEmpty
                           ? TranslatorAnimatedColumn(
                               children: [

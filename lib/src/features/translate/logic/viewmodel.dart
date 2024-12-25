@@ -184,18 +184,19 @@ class RecordingViewModel extends DisposableChangeNotifier {
         debugPrint("Unexpected Error: $e");
       } finally {
         isTranslating = false;
+        if (_translatedTextAndSpeech.isNotEmpty) {
+          final historyItem = HistoryItem(
+            countries: [fromLanguage, translatedLanguage],
+            word: text,
+            date: DateTime.now().toString(),
+            translations: _translatedTextAndSpeech,
+          );
 
-        final historyItem = HistoryItem(
-          countries: [fromLanguage, translatedLanguage],
-          word: text,
-          date: DateTime.now().toString(),
-          translations: _translatedTextAndSpeech,
-        );
-
-        if (canSave!) {
-          historyItems.add(historyItem);
-          serviceLocator<HistoryViewmodel>()
-              .addMultipleHistoryItem(historyItems);
+          if (canSave!) {
+            historyItems.add(historyItem);
+            serviceLocator<HistoryViewmodel>()
+                .addMultipleHistoryItem(historyItems);
+          }
         }
         notifyListeners();
       }

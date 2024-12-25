@@ -100,6 +100,8 @@ class _GalleryViewState extends State<GalleryView> {
                           if (value.isTranslating) const AppLoader(),
                           if (value.errorMessage.isNotEmpty)
                             Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: horizontalPadding),
                               color: kBackgroundColor.withOpacity(0.2),
                               child: Center(
                                   child: Text(

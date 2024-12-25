@@ -79,15 +79,19 @@ class TranslationService {
         // Proceed with speech generation if `res` is not empty
         final speech = await _getSpeech(res);
 
-        return Right([res, speech]); // Return the list of strings on success
+        return Right([res, speech]);
       } else {
-        final errorMessage =
-            'Failed to translate text: ${response.statusMessage}';
-        return Left(errorMessage); // Return error message on failure
+        log('Failed to translate text: ${response.statusMessage}');
+        const errorMessage =
+            'Failed to translate text: An Error Occured, try again later';
+
+        return const Left(errorMessage);
       }
     } catch (e) {
-      final errorMessage = 'An error occurred: ${e.toString()}';
-      return Left(errorMessage); // Return error message on exception
+      log('An error occurred: ${e.toString()}');
+      const errorMessage =
+          'Failed to translate text: An Error Occured, try again later';
+      return const Left(errorMessage);
     }
   }
 }

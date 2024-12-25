@@ -130,8 +130,8 @@ class IconBackgroundWidget extends StatelessWidget {
       bg = null;
     }
     return Container(
-      width: width ?? 30.h,
-      height: height ?? 30.h,
+      width: width ?? 40.h,
+      height: height ?? 40.h,
       decoration: BoxDecoration(
         color: backgroundColor ?? bg,
         gradient: hasGradient! ? kPrimaryGradient : null,
