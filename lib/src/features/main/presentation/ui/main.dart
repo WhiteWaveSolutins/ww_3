@@ -18,7 +18,6 @@ import 'package:ai_translator/src/shared/widgets/textfields.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 class MainScreen extends StatefulWidget {
@@ -60,7 +59,7 @@ class _SettingsViewState extends State<MainScreen> {
                 children: [
                   if (context
                       .read<HistoryViewmodel>()
-                      .historyItemList
+                      .getHistoryItem()
                       .histories
                       .isEmpty)
                     if (!value.isActive)
@@ -68,7 +67,7 @@ class _SettingsViewState extends State<MainScreen> {
                         bottom: 20.h,
                         left: 0,
                         right: 0,
-                        child: SvgPicture.asset(
+                        child: Image.asset(
                           sMain,
                           fit: BoxFit.fitWidth,
                         ),
@@ -114,7 +113,7 @@ class _MainBodyWidget extends StatelessWidget {
             children: [
               Container(
                 height: value.isActive
-                    ? kAppsize(context).height * 0.35
+                    ? kAppsize(context).height * 0.4
                     : kAppsize(context).height * 0.2,
                 padding: EdgeInsets.symmetric(
                     horizontal: horizontalPadding, vertical: verticalPadding),
@@ -134,7 +133,7 @@ class _MainBodyWidget extends StatelessWidget {
                           controller: value.textEditingController,
                           placeholderStyle: context.bodyLarge
                               .copyWith(color: kTextColor.withOpacity(0.7)),
-                          maxLines: value.isActive ? 2 : 1,
+                          maxLines: value.isActive ? 3 : 1,
                           onEditingComplete: () {
                             FocusScope.of(context).unfocus();
                             value.translateText(
@@ -145,7 +144,7 @@ class _MainBodyWidget extends StatelessWidget {
                               value.isActive = true;
                               value.onTextChanged(s, (finalText) {
                                 value.translateText(
-                                    isSpeaking: false, canSave: s.length > 40);
+                                    isSpeaking: false, canSave: s.length > 60);
                               });
                             }
                           },
@@ -272,7 +271,7 @@ class _MainBodyWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-                      width: kAppsize(context).width * 0.55,
+                      width: kAppsize(context).width * 0.5,
                       child: Column(
                         children: [
                           HistoryWidget(

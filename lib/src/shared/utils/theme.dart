@@ -91,6 +91,13 @@ const kSecondaryGradient = LinearGradient(colors: [
   kSecondaryFade1,
 ]);
 
+final historyGradient = LinearGradient(tileMode: TileMode.clamp, colors: [
+  kRed.withOpacity(0.02),
+  kSurfaceColor.withOpacity(0.02),
+  kSecondaryFade4.withOpacity(0.1),
+  kBackgroundColor.withOpacity(0.1),
+]);
+
 const kRed = Color(0xffFF1818);
 
 const kBlue = Color(0xff6EB1FE);

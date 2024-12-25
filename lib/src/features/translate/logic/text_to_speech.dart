@@ -2,6 +2,8 @@ import 'dart:developer';
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
+AudioPlayer? _audioPlayer;
+
 class TextToSpeechService {
   final FlutterTts _flutterTts = FlutterTts();
 
@@ -23,17 +25,18 @@ class TextToSpeechService {
   }
 
   Future<Duration> playAudio(String path, {required bool stopPlaying}) async {
-    final player = AudioPlayer();
+    _audioPlayer ??= AudioPlayer();
+
     if (stopPlaying) {
-      await player.stop();
+      await _audioPlayer?.stop();
       return Duration.zero;
     } else {
-      await player.setFilePath(path);
-      await player.play();
-      await player.setSpeed(0.1);
-      await player.setVolume(1.0);
-      await player.stop();
-      return player.duration ?? Duration.zero;
+      await _audioPlayer?.setFilePath(path);
+      await _audioPlayer?.play();
+      await _audioPlayer?.setVolume(1.0);
+
+      await _audioPlayer?.stop();
+      return _audioPlayer?.duration ?? Duration.zero;
     }
   }
 }

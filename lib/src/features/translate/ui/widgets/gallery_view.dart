@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:ai_translator/src/features/main/presentation/ui/widgets/widgets.dart';
+import 'package:ai_translator/src/features/settings/ui/settings.dart';
 import 'package:ai_translator/src/features/translate/logic/viewmodel.dart';
+import 'package:ai_translator/src/service-locators/app.dart';
 import 'package:ai_translator/src/shared/utils/assets.dart';
 import 'package:ai_translator/src/shared/utils/size_utils.dart';
 import 'package:ai_translator/src/shared/utils/theme.dart';
@@ -10,7 +12,6 @@ import 'package:ai_translator/src/shared/widgets/loaders.dart';
 import 'package:ai_translator/src/shared/widgets/scaffold.dart';
 import 'package:ai_translator/src/shared/widgets/textfields.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_mlkit_commons/google_mlkit_commons.dart';
@@ -44,7 +45,7 @@ class _GalleryViewState extends State<GalleryView> {
   File? _image;
   String? path;
   ImagePicker? _imagePicker;
-  bool _isCopied = false;
+  final bool _isCopied = false;
   bool _showImageOnly = false;
 
   @override
@@ -70,18 +71,18 @@ class _GalleryViewState extends State<GalleryView> {
         child: Stack(
           children: [
             SafeArea(
-              child: Row(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(
-                        right: horizontalPadding, top: verticalPadding),
-                    child: AppFabButton(
-                      onPressed: widget.onDetectorViewModeChanged,
-                      icon: CupertinoIcons.camera,
-                    ),
+              child: Padding(
+                  padding: EdgeInsets.only(
+                      left: horizontalPadding,
+                      top: verticalPadding,
+                      right: horizontalPadding),
+                  child: _backButton()
+
+                  // AppFabButton(
+                  //   onPressed: widget.onDetectorViewModeChanged,
+                  //   icon: CupertinoIcons.camera,
+                  // ),
                   ),
-                ],
-              ),
             ),
             _image != null
                 ? Consumer<RecordingViewModel>(
@@ -112,6 +113,26 @@ class _GalleryViewState extends State<GalleryView> {
       ),
     );
   }
+
+  Widget _backButton() => Positioned(
+      top: 40.h,
+      left: horizontalPadding,
+      right: horizontalPadding,
+      child: SizedBox(
+        width: kAppsize(context).width,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            AppbackButton(
+              onPressed: () {
+                serviceLocator<RecordingViewModel>().resetTranslation();
+                Navigator.pop(context);
+              },
+            ),
+            const SettingsButton(),
+          ],
+        ),
+      ));
 
   Widget _bottomWidget() => Positioned(
       bottom: 0,
@@ -152,7 +173,7 @@ class _GalleryViewState extends State<GalleryView> {
                                   width: 130.w,
                                   language: _isCopied ? "Copied!" : "Copy",
                                   onPressed: () {
-                                    _copyToClipboard(
+                                    value.copyToClipboard(
                                         widget.translations.join(' '));
                                   },
                                   iconWidget: Stack(
@@ -234,24 +255,5 @@ class _GalleryViewState extends State<GalleryView> {
     path = path;
     final inputImage = InputImage.fromFilePath(path);
     await widget.onImage(inputImage);
-  }
-
-  void _copyToClipboard(String text) async {
-    // Copy text to clipboard
-    await Clipboard.setData(ClipboardData(text: text));
-
-    // Update the state to show "Copied!"
-    setState(() {
-      _isCopied = true;
-    });
-
-    // Revert back to "Copy" after 2 seconds
-    Future.delayed(const Duration(seconds: 2), () {
-      if (mounted) {
-        setState(() {
-          _isCopied = false;
-        });
-      }
-    });
   }
 }

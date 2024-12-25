@@ -258,7 +258,6 @@ class _CameraViewState extends State<CameraView> {
       if (!mounted) {
         return;
       }
-      log('Controller Initialized Live Feed Started');
       _controller?.getMinZoomLevel().then((value) {
         currentZoomLevel = value;
         minAvailableZoom = value;

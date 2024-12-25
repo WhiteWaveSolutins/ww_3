@@ -85,8 +85,8 @@ class AppFabButton extends StatelessWidget {
       child: Opacity(
         opacity: opacity!,
         child: Container(
-          width: 35.h,
-          height: 35.h,
+          width: 40.h,
+          height: 40.h,
           decoration: BoxDecoration(
             color: bgColor,
             gradient: bgColor == null ? kPrimaryGradient : null,

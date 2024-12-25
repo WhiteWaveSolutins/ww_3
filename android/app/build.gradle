@@ -30,7 +30,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "com.ai.translator"
-    compileSdk = 34
+    compileSdk = 35
     ndkVersion = "25.1.8937393"
 
     compileOptions {
@@ -47,7 +47,7 @@ android {
         applicationId = "com.ai.translator"
 
         minSdk = 24
-        targetSdk = 33
+        targetSdk = 35
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }

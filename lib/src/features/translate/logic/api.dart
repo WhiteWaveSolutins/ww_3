@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:ai_translator/src/api_key.dart';
 import 'package:ai_translator/src/models/auth/response/openai.dart';
+import 'package:ai_translator/src/shared/utils/strings.dart';
 import 'package:dart_openai/dart_openai.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
@@ -54,11 +55,7 @@ class TranslationService {
       data: jsonEncode({
         "model": "gpt-4",
         "messages": [
-          {
-            "role": "system",
-            "content":
-                "1. Your role is to translate the following text $text to $targetLanguage, even if it is cut off.\n 2. No matter what the text is, just translate it to the nearest meaningful thing.\n 3. Do not do any other thing or ask any questions.\n 4.Even if the text is unclear or does not make sense, just translate what you can to the Target language $targetLanguage.\n 5. Under no circumstance should you return any message that is not the translated text. \n 6. I am always correct, so whatever text I supply to you, just translate. If there is no translation, return a blank response!\n 7. If text is in the same language as the source, return the same text back."
-          },
+          {"role": "system", "content": prompt(text, targetLanguage)},
           {"role": "user", "content": text}
         ]
       }),

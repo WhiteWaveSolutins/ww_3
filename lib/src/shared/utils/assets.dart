@@ -21,6 +21,7 @@ final String sArrowRight = 'arrow_right'.svg;
 final String sMore = 'more'.svg;
 final String sCopy = 'copy'.svg;
 final String sCopy1 = 'ellipse_copy'.svg;
+final String sEdit = 'pen'.svg;
 final String sRecordBackground = 'record_background'.svg;
 
 //pngs
@@ -33,7 +34,7 @@ final String sOnboarding2 = 'onboarding-2'.png;
 final String sOnboarding3 = 'onboarding-3'.png;
 final String sOnboarding4 = 'onboarding-4'.png;
 final String sMainBg = 'main_bg'.png;
-final String sMain = 'main'.svg;
+final String sMain = 'smain'.png;
 final String sCamera = 'camera'.png;
 
 extension ImageExtension on String {

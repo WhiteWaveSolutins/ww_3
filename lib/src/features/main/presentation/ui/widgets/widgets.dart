@@ -1,16 +1,20 @@
 import 'package:ai_translator/src/features/main/data/model.dart';
+import 'package:ai_translator/src/features/main/presentation/viewmodel/history_viewmodel.dart';
 import 'package:ai_translator/src/features/settings/ui/settings.dart';
 import 'package:ai_translator/src/features/translate/logic/viewmodel.dart';
 import 'package:ai_translator/src/shared/utils/assets.dart';
 import 'package:ai_translator/src/shared/utils/size_utils.dart';
+import 'package:ai_translator/src/shared/utils/strings.dart';
 import 'package:ai_translator/src/shared/utils/text_theme.dart';
 import 'package:ai_translator/src/shared/utils/theme.dart';
+import 'package:ai_translator/src/shared/widgets/bottom_sheet.dart';
 import 'package:ai_translator/src/shared/widgets/buttons.dart';
 import 'package:ai_translator/src/shared/widgets/drop_down.dart';
 import 'package:ai_translator/src/shared/widgets/textfields.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class SettingsButton extends StatelessWidget {
@@ -45,182 +49,202 @@ class HistoryWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<RecordingViewModel>(
-      builder: (context, value, child) => Container(
-        margin: EdgeInsets.only(bottom: verticalPadding),
-        padding: EdgeInsets.symmetric(
-            horizontal: horizontalPadding, vertical: verticalPadding),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(bigBorderRadius),
-            color: kSecondaryFade1.withOpacity(0.05)),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Align(
-              alignment: Alignment.topRight,
-              child: SizedBox(
-                height: 20.h,
-                child: CupertinoButton(
-                  onPressed: () {
-                    showMenu(context);
-                  },
-                  padding: EdgeInsets.zero,
-                  child: SvgPicture.asset(sMore),
-                ),
-              ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      builder: (context, value, child) => Consumer<HistoryViewmodel>(
+        builder: (__, viewmodel, _) => GestureDetector(
+          onTap: () => viewmodel.toggleMenu(viewmodel.emptyHistoryItem),
+          child: Container(
+            margin: EdgeInsets.only(bottom: verticalPadding),
+            padding: EdgeInsets.symmetric(
+                horizontal: horizontalPadding, vertical: verticalPadding),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(bigBorderRadius),
+                color: kSecondaryFade1.withOpacity(0.05)),
+            child: Stack(
               children: [
-                if (!isHistory!)
-                  Row(
-                    children: [
-                      Text(
-                        value.inputLang['flag']!,
-                        style: context.displayLarge,
-                      ),
-                      HorizontalPadding(
-                        child: Text(
-                          value.outputLang['flag']!,
-                          style: context.displayLarge,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: SizedBox(
+                        height: 20.h,
+                        child: CupertinoButton(
+                          onPressed: () {
+                            viewmodel.toggleMenu(historyItem);
+                          },
+                          padding: EdgeInsets.zero,
+                          child: SvgPicture.asset(sMore),
                         ),
-                      )
-                    ],
-                  ),
-                const VerticalSpacer(),
-                if (isHistory!)
-                  Text(
-                    value.inputLang['flag']!,
-                    style: context.displayLarge,
-                  ),
-                const VerticalSpacer(),
-                Text(historyItem.word),
-                if (isHistory!)
-                  if (historyItem.translations.isNotEmpty)
+                      ),
+                    ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        VerticalPadding(
-                            child: AppDivider(
-                          color: kTabFade1.withOpacity(0.3),
-                        )),
-                        Text(
-                          value.outputLang['flag']!,
-                          style: context.displayLarge,
-                        ),
+                        if (!isHistory!)
+                          Row(
+                            children: [
+                              Text(
+                                value.inputLang['flag']!,
+                                style: context.displayLarge,
+                              ),
+                              HorizontalPadding(
+                                child: Text(
+                                  value.outputLang['flag']!,
+                                  style: context.displayLarge,
+                                ),
+                              )
+                            ],
+                          ),
                         const VerticalSpacer(),
-                        Text(historyItem.translations[0]),
+                        if (isHistory!)
+                          Text(
+                            value.inputLang['flag']!,
+                            style: context.displayLarge,
+                          ),
+                        const VerticalSpacer(),
+                        Text(historyItem.word),
+                        if (isHistory!)
+                          if (historyItem.translations.isNotEmpty)
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                VerticalPadding(
+                                    child: AppDivider(
+                                  color: kTabFade1.withOpacity(0.3),
+                                )),
+                                Text(
+                                  value.outputLang['flag']!,
+                                  style: context.displayLarge,
+                                ),
+                                const VerticalSpacer(),
+                                Text(historyItem.translations.first),
+                              ],
+                            ),
                       ],
                     ),
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: AppFabButton(
+                        icon: CupertinoIcons.play_fill,
+                        onPressed: () async {
+                          await value.playTranslatedText(
+                              textAndSound: historyItem.translations);
+                        },
+                      ),
+                    )
+                  ],
+                ),
+                if (historyItem == viewmodel.historyItem)
+                  Align(
+                      alignment: Alignment.topRight,
+                      child: AnimatedOpacity(
+                        duration: const Duration(milliseconds: 300),
+                        opacity: 1,
+                        child: Container(
+                          margin: EdgeInsets.all(smallVerticalPadding),
+                          padding: EdgeInsets.symmetric(
+                            vertical: verticalPadding,
+                          ),
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.circular(bigBorderRadius),
+                              color: kBackgroundColor.withOpacity(1),
+                              boxShadow: [
+                                BoxShadow(color: kTabFade1.withOpacity(0.02))
+                              ]),
+                          child: Column(
+                            children: [
+                              HorizontalPadding(
+                                child: CupertinoButton(
+                                  padding: EdgeInsets.zero,
+                                  onPressed: () {
+                                    showHistoryItemSheet(
+                                        context, value, historyItem);
+                                    viewmodel
+                                        .toggleMenu(viewmodel.emptyHistoryItem);
+                                  },
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Open',
+                                        style: context.bodyMedium,
+                                      ),
+                                      SvgPicture.asset(sEdit),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              const VerticalPadding(
+                                  isSmallPadding: true, child: AppDivider()),
+                              HorizontalPadding(
+                                child: CupertinoButton(
+                                  padding: EdgeInsets.zero,
+                                  onPressed: () {
+                                    value.copyToClipboard(
+                                        historyItem.translations.first);
+                                    viewmodel
+                                        .toggleMenu(viewmodel.emptyHistoryItem);
+                                  },
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Copy',
+                                        style: context.bodyMedium,
+                                      ),
+                                      const RotatedBox(
+                                        quarterTurns: 1,
+                                        child: Icon(
+                                          CupertinoIcons.square_arrow_left,
+                                          color: CupertinoColors.white,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              const VerticalPadding(
+                                  isSmallPadding: true, child: AppDivider()),
+                              HorizontalPadding(
+                                child: CupertinoButton(
+                                  padding: EdgeInsets.zero,
+                                  onPressed: () {
+                                    context
+                                        .read<HistoryViewmodel>()
+                                        .deleteHistoryItem(historyItem);
+                                    viewmodel
+                                        .toggleMenu(viewmodel.emptyHistoryItem);
+                                  },
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Delete',
+                                        style: context.bodyMedium,
+                                      ),
+                                      const Icon(
+                                        CupertinoIcons.delete,
+                                        color: CupertinoColors.systemRed,
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ))
               ],
             ),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: AppFabButton(
-                icon: CupertinoIcons.play_fill,
-                onPressed: () async {
-                  await value.playTranslatedText(
-                      textAndSound: historyItem.translations);
-                },
-              ),
-            )
-          ],
+          ),
         ),
       ),
     );
   }
-
-  void showMenu(BuildContext context) {
-    CupertinoContextMenu(
-      enableHapticFeedback: true,
-      actions: <Widget>[
-        CupertinoContextMenuAction(
-          onPressed: () {
-            Navigator.pop(context);
-            // Perform "Open" action
-          },
-          child: const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Open'),
-              Icon(CupertinoIcons.pencil),
-            ],
-          ),
-        ),
-        CupertinoContextMenuAction(
-          onPressed: () {
-            Navigator.pop(context);
-            // Perform "Copy" action
-          },
-          child: const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Copy'),
-              Icon(CupertinoIcons.doc_on_clipboard),
-            ],
-          ),
-        ),
-        CupertinoContextMenuAction(
-          isDestructiveAction: true,
-          onPressed: () {
-            Navigator.pop(context);
-            // Perform "Delete" action
-          },
-          child: const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Delete'),
-              Icon(CupertinoIcons.trash, color: CupertinoColors.destructiveRed),
-            ],
-          ),
-        ),
-      ],
-      child: Container(
-        width: 100,
-        height: 100,
-        color: CupertinoColors.activeBlue,
-        alignment: Alignment.center,
-        child: const Text(
-          'Hold Me',
-          style: TextStyle(color: CupertinoColors.white),
-        ),
-      ),
-    );
-  }
-
-  // void _showCupertinoActionSheet(BuildContext context) {
-  //   showCupertinoModalPopup(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return CupertinoActionSheet(
-  //         title: const Text('Select an Option'),
-  //         message: const Text('Choose an action to perform'),
-  //         actions: <CupertinoActionSheetAction>[
-  //           CupertinoActionSheetAction(
-  //             onPressed: () {
-  //               Navigator.pop(context);
-  //               // Perform "Open" action
-  //             },
-  //             child: const Text('Open'),
-  //           ),
-  //           CupertinoActionSheetAction(
-  //             onPressed: () {
-  //               Navigator.pop(context);
-  //               // Perform "Copy" action
-  //             },
-  //             child: const Text('Copy'),
-  //           ),
-  //           CupertinoActionSheetAction(
-  //             isDestructiveAction: true,
-  //             onPressed: () {
-  //               Navigator.pop(context);
-  //             },
-  //             child: const Text('Delete'),
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
 }
 
 class MainActionButton extends StatelessWidget {
@@ -269,6 +293,129 @@ class MainActionButton extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+String getNameByCode(String code) {
+  try {
+    return supportedLanguages
+        .firstWhere((language) => language['code'] == code)['name'] as String;
+  } catch (e) {
+    return 'N/A';
+  }
+}
+
+String getFlagByCode(String code) {
+  try {
+    return supportedLanguages
+        .firstWhere((language) => language['code'] == code)['flag'] as String;
+  } catch (e) {
+    return 'N/A';
+  }
+}
+
+Future<dynamic> showHistoryItemSheet(
+  BuildContext context,
+  RecordingViewModel value,
+  HistoryItem item,
+) {
+  DateFormat formatter = DateFormat('MMM d, HH:mm');
+
+//  formatter.format(now);
+  return showAppBottomSheet(context,
+      isDismissible: true,
+      child: Padding(
+        padding: EdgeInsets.only(top: bigPadding),
+        child: Column(children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${getNameByCode(item.countries.first)} - ${getNameByCode(item.countries.last)}',
+                    style: context.displayLarge,
+                  ),
+                  Text(formatter
+                      .format(DateTime.tryParse(item.date) ?? DateTime.now()))
+                ],
+              ),
+              PlayWidget(
+                value: value,
+                item: item,
+              ),
+            ],
+          ),
+          Container(
+            margin: EdgeInsets.only(top: verticalPadding),
+            padding: EdgeInsets.symmetric(
+                horizontal: horizontalPadding, vertical: verticalPadding),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(bigBorderRadius),
+                color: kSecondaryFade1.withOpacity(0.02)),
+            child: Stack(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${getFlagByCode(item.countries.first)}  ${getNameByCode(item.countries.first)}',
+                          style: context.bodyLarge,
+                        ),
+                        const VerticalSpacer(),
+                        Text(item.word),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            VerticalPadding(
+                                child: AppDivider(
+                              color: kTabFade1.withOpacity(0.3),
+                            )),
+                            Text(
+                              '${getFlagByCode(item.countries.last)}  ${getNameByCode(item.countries.last)}',
+                              style: context.bodyLarge,
+                            ),
+                            const VerticalSpacer(),
+                            Text(
+                              item.translations.first,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ]),
+      ));
+}
+
+class PlayWidget extends StatelessWidget {
+  const PlayWidget({
+    super.key,
+    required this.value,
+    required this.item,
+  });
+  final RecordingViewModel value;
+  final HistoryItem item;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppFabButton(
+      icon: !value.isPlayingAudio
+          ? CupertinoIcons.play_fill
+          : CupertinoIcons.pause,
+      onPressed: () async {
+        await value.playTranslatedText(textAndSound: item.translations);
+      },
     );
   }
 }

@@ -5,12 +5,32 @@ import 'package:ai_translator/src/shared/utils/disposable_change_notifier.dart';
 class HistoryViewmodel extends DisposableChangeNotifier {
   HistoryItemList historyItemList = HistoryItemList(histories: []);
 
-  HistoryItemList getHistoryItem() {
-    return historyItemList = historyRepo.getTranslationHistory();
+  HistoryItem? historyItem;
+
+  final emptyHistoryItem =
+      HistoryItem(countries: [], word: '', translations: [], date: '');
+
+  void toggleMenu(HistoryItem item) {
+    if (historyItem == item) {
+      historyItem = emptyHistoryItem;
+    } else {
+      historyItem = item;
+    }
+
+    notifyListeners();
   }
 
-  deleteHistoryItem(HistoryItem item) {
-    historyRepo.deleteHistory(item);
+  HistoryItemList getHistoryItem() {
+    var historyItemList = historyRepo.getTranslationHistory();
+    var s = historyItemList.histories.reversed.toList();
+    final toReturn = HistoryItemList(histories: s);
+    return toReturn;
+  }
+
+  Future<bool> deleteHistoryItem(HistoryItem item) async {
+    final r = await historyRepo.deleteHistory(item);
+    getHistoryItem();
+    return r;
   }
 
   addHistoryItem(HistoryItem item) {
@@ -21,17 +41,10 @@ class HistoryViewmodel extends DisposableChangeNotifier {
     historyRepo.saveMultipleTranslationHistoryToLocal(items);
   }
 
-  addDummyHistory() {
-    historyRepo.saveMultipleTranslationHistoryToLocal(_dummyHistory);
-  }
+  // addDummyHistory() {
+  //   historyRepo.saveMultipleTranslationHistoryToLocal(_dummyHistory);
+  // }
 
   @override
   void disposeValues() {}
 }
-
-final _dummyHistory = [
-  HistoryItem(
-      countries: ['usa', 'france'],
-      word: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit...',
-      translations: ['a very long translated text', 'smsmskmsk']),
-];

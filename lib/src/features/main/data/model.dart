@@ -37,21 +37,25 @@ class HistoryItemList {
 class HistoryItem {
   final List<String> countries;
   final String word;
+  final String date;
   final List<String> translations;
   HistoryItem({
     required this.countries,
     required this.word,
     required this.translations,
+    required this.date,
   });
 
   HistoryItem copyWith({
     List<String>? countries,
     String? word,
+    String? date,
     List<String>? translations,
   }) {
     return HistoryItem(
       countries: countries ?? this.countries,
       word: word ?? this.word,
+      date: date ?? this.date,
       translations: translations ?? this.translations,
     );
   }
@@ -60,6 +64,7 @@ class HistoryItem {
     return <String, dynamic>{
       'countries': countries,
       'word': word,
+      'date': date,
       'translations': translations,
     };
   }
@@ -70,6 +75,7 @@ class HistoryItem {
           ? List<String>.from((map['countries'] as List<dynamic>))
           : [],
       word: map['word'] ?? '',
+      date: map['date'] ?? '',
       translations: map['translations'] != null
           ? List<String>.from((map['translations'] as List<dynamic>))
           : [],
@@ -78,5 +84,5 @@ class HistoryItem {
 
   @override
   String toString() =>
-      'HistoryItem(countries: $countries, word: $word, translation: $translations)';
+      'HistoryItem(countries: $countries, word: $word, translation: $translations, Date: $date)';
 }

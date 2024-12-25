@@ -258,42 +258,42 @@ class TextOverlay extends StatelessWidget {
   }
 
   // Method to adjust positions to avoid overlap
-  List<TextBlock> _adjustBlockPositions(List<TextBlock> blocks) {
-    final adjustedBlocks = List<TextBlock>.from(blocks);
+  // List<TextBlock> _adjustBlockPositions(List<TextBlock> blocks) {
+  //   final adjustedBlocks = List<TextBlock>.from(blocks);
 
-    for (int i = 0; i < adjustedBlocks.length; i++) {
-      for (int j = i + 1; j < adjustedBlocks.length; j++) {
-        final blockA = adjustedBlocks[i];
-        final blockB = adjustedBlocks[j];
+  //   for (int i = 0; i < adjustedBlocks.length; i++) {
+  //     for (int j = i + 1; j < adjustedBlocks.length; j++) {
+  //       final blockA = adjustedBlocks[i];
+  //       final blockB = adjustedBlocks[j];
 
-        final deltaLeft =
-            (blockA.boundingBox.left - blockB.boundingBox.left).abs();
-        final deltaTop =
-            (blockA.boundingBox.top - blockB.boundingBox.top).abs();
+  //       final deltaLeft =
+  //           (blockA.boundingBox.left - blockB.boundingBox.left).abs();
+  //       final deltaTop =
+  //           (blockA.boundingBox.top - blockB.boundingBox.top).abs();
 
-        if (deltaLeft < 30 && deltaTop < 30) {
-          // Adjust blockB's position to avoid overlap
-          final newTop = blockB.boundingBox.top - 30;
-          final newLeft = blockB.boundingBox.left - 100;
+  //       if (deltaLeft < 30 && deltaTop < 30) {
+  //         // Adjust blockB's position to avoid overlap
+  //         final newTop = blockB.boundingBox.top - 30;
+  //         final newLeft = blockB.boundingBox.left - 100;
 
-          adjustedBlocks[j] = TextBlock(
-            cornerPoints: adjustedBlocks[j].cornerPoints,
-            lines: adjustedBlocks[j].lines,
-            recognizedLanguages: adjustedBlocks[j].recognizedLanguages,
-            boundingBox: Rect.fromLTWH(
-              newLeft,
-              newTop,
-              blockB.boundingBox.width,
-              blockB.boundingBox.height,
-            ),
-            text: blockB.text,
-          );
-        }
-      }
-    }
+  //         adjustedBlocks[j] = TextBlock(
+  //           cornerPoints: adjustedBlocks[j].cornerPoints,
+  //           lines: adjustedBlocks[j].lines,
+  //           recognizedLanguages: adjustedBlocks[j].recognizedLanguages,
+  //           boundingBox: Rect.fromLTWH(
+  //             newLeft,
+  //             newTop,
+  //             blockB.boundingBox.width,
+  //             blockB.boundingBox.height,
+  //           ),
+  //           text: blockB.text,
+  //         );
+  //       }
+  //     }
+  //   }
 
-    return adjustedBlocks;
-  }
+  //   return adjustedBlocks;
+  // }
 
   // Method to adjust the translated texts list
   List<String> _adjustTranslatedTexts(List<String> texts, int blockLength) {

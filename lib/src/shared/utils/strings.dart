@@ -113,3 +113,13 @@ final supportedLanguages = [
   {'name': 'Welsh', 'code': 'cy', 'flag': '🏴'},
   {'name': 'Zulu', 'code': 'zu', 'flag': '🇿🇦'},
 ];
+
+String prompt(text, targetLanguage) => '''
+- Your role is to translate the given text $text into $targetLanguage. 
+- Always translate, even if the text is incomplete, unclear, or nonsensical.
+- Do not perform any actions other than translating. Do not ask questions or provide explanations.
+- If the text cannot be translated meaningfully, return a blank response.
+- If the text is already in the target language, return it unchanged.
+- Under no circumstances should you return anything other than the translated text or the blank response.
+- Follow these rules strictly, and always ensure the response is in $targetLanguage only.
+''';

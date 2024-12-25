@@ -23,7 +23,7 @@ Future<dynamic> showAppBottomSheet(BuildContext context,
     builder: (context) {
       return Container(
           decoration: BoxDecoration(
-            color: kBottomSheetColor,
+            color: kBackgroundColor,
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(bigBorderRadius),
                 topRight: Radius.circular(bigBorderRadius)),

@@ -10,6 +10,7 @@ import 'package:ai_translator/src/service-locators/app.dart';
 import 'package:ai_translator/src/shared/utils/disposable_change_notifier.dart';
 import 'package:ai_translator/src/shared/utils/strings.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class RecordingViewModel extends DisposableChangeNotifier {
   final SpeechService _speechService;
@@ -170,6 +171,7 @@ class RecordingViewModel extends DisposableChangeNotifier {
         final historyItem = HistoryItem(
           countries: [fromLanguage, translatedLanguage],
           word: text,
+          date: DateTime.now().toString(),
           translations: _translatedTextAndSpeech,
         );
         if (canSave!) {
@@ -184,25 +186,38 @@ class RecordingViewModel extends DisposableChangeNotifier {
 
   Future<void> playTranslatedText({required List<String> textAndSound}) async {
     if (_isPlayingAudio) {
-      stopPlayingTranslatedText(textAndSound: textAndSound);
-      _isPlayingAudio = false;
+      await _ttsService.playAudio(textAndSound[1], stopPlaying: true);
+      isPlayingAudio = false;
     } else {
       if (textAndSound.isNotEmpty && textAndSound.length > 1) {
         isPlayingAudio = true;
-        final s =
+        final duration =
             await _ttsService.playAudio(textAndSound[1], stopPlaying: false);
-        await Future.delayed(s, () {
+        await Future.delayed(duration, () {
           isPlayingAudio = false;
         });
       }
     }
   }
 
-  Future<void> stopPlayingTranslatedText(
-      {required List<String> textAndSound}) async {
-    final s = await _ttsService.playAudio(textAndSound[1], stopPlaying: true);
-    await Future.delayed(s, () {
-      isPlayingAudio = false;
+  bool _isCopied = false;
+  bool get isCopied => _isCopied;
+  set isCopied(bool val) {
+    _isCopied = val;
+    notifyListeners();
+  }
+
+  void copyToClipboard(String text) async {
+    // Copy text to clipboard
+    await Clipboard.setData(ClipboardData(text: text));
+
+    // Update the state to show "Copied!"
+
+    _isCopied = true;
+
+    // Revert back to "Copy" after 2 seconds
+    Future.delayed(const Duration(seconds: 2), () {
+      _isCopied = false;
     });
   }
 
