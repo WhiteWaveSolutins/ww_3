@@ -1,25 +1,30 @@
-import 'package:ai_translator/src/service-locators/app.dart';
-import 'package:ai_translator/src/shared/utils/app_providers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
 
-import 'src/app.dart';
+import 'app.dart';
+import 'service-locators/app.dart';
+import 'shared/utils/app_providers.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(
+    widgetsBinding: WidgetsFlutterBinding.ensureInitialized(),
+  );
   await AppServiceLocator.initialize();
 
   Future.wait([
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]),
-  ]).then((value) {
-    runApp(
-      MultiProvider(
-        providers: [...appProviders],
-        child: const MyApp(),
-      ),
-    );
-  });
+  ]).then(
+    (value) {
+      runApp(
+        MultiProvider(
+          providers: [...appProviders],
+          child: const MyApp(),
+        ),
+      );
+    },
+  );
 }

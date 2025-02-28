@@ -4,7 +4,7 @@ description: "An AI Translator App"
 # Prevent accidental publishing to pub.dev.
 publish_to: 'none'
 
-version: 1.0.0+1
+version: 1.0.0+2
 
 environment:
   sdk: ^3.5.4
@@ -21,7 +21,6 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   flutter_pdfview: ^1.3.4
-  flutter_screenutil: ^5.9.3
   flutter_svg: ^2.0.16
   flutter_tts: ^4.2.0
   gaimon: ^1.4.0
@@ -42,7 +41,7 @@ dependencies:
   socket_io: ^1.0.1
   socket_io_client: ^1.0.2
   speech_to_text: ^7.0.0
-
+  flutter_native_splash: ^2.4.5
   
 
 dev_dependencies:
@@ -55,10 +54,14 @@ dev_dependencies:
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/images/logo.png"
+  remove_alpha_ios: true
+  image_path: "assets/images/icon.png"
   min_sdk_android: 24 
 
 
+flutter_native_splash:
+  image: assets/images/icon_cropped.png
+  background_image: assets/images/splash.png
 
 flutter:
   uses-material-design: false
