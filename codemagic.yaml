@@ -8,7 +8,7 @@ workflows:
     environment:
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: com.WWresizR.7app
+        bundle_identifier: com.AItranslate.w3w
       flutter: stable
       xcode: latest
       cocoapods: default
