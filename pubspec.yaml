@@ -4,7 +4,7 @@ description: "An AI Translator App"
 # Prevent accidental publishing to pub.dev.
 publish_to: 'none'
 
-version: 1.0.7+8
+version: 1.0.7+9
 
 environment:
   sdk: ^3.5.4
