@@ -141,9 +141,9 @@ class _SettingsViewState extends State<OnboardingScreen>
                                 child: TranslatorPrimaryButton(
                                   size: double.infinity,
                                   opacity: value.isLoading ? 0.5 : 1,
-                                  title: _currentIndex < 3
+                                  title: _currentIndex < 2
                                       ? 'Next'
-                                      : 'Try Free & Subscribe',
+                                      : 'Get started',
                                   onPressed: !value.isLoading
                                       ? () async {
                                           await showNextContents(value,
@@ -190,7 +190,7 @@ class _SettingsViewState extends State<OnboardingScreen>
 
   Future<void> showNextContents(AuthenticationViewModel value,
       {bool? canLogin = false}) async {
-    if (_currentIndex < 3) {
+    if (_currentIndex < 2) {
       _pageController.animateToPage(_currentIndex + 1,
           duration: const Duration(milliseconds: 400), curve: Curves.linear);
     } else {

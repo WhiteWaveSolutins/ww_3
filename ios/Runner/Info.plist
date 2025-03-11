@@ -25,13 +25,13 @@
 		<key>LSRequiresIPhoneOS</key>
 		<true/>
 		<key>NSSpeechRecognitionUsageDescription</key>
-		<string>Please allow Mic Usage</string>
-		<key>NSCameraUsageDescription</key>
-		<string>To take photos and video with your camera</string>
-		<key>NSMicrophoneUsageDescription</key>
-		<string>To take video with your camera</string>
-		<key>NSPhotoLibraryUsageDescription</key>
-		<string>To access your photos in your Library</string>
+        <string>We need access to speech recognition to transcribe your voice for translation purposes</string>
+        <key>NSCameraUsageDescription</key>
+        <string>We need camera access to capture text and images for translation</string>
+        <key>NSMicrophoneUsageDescription</key>
+        <string>We need microphone access to record your voice for real-time translation</string>
+        <key>NSPhotoLibraryUsageDescription</key>
+        <string>We need access to your photo library to translate text from your saved images</string>
 		<key>UILaunchStoryboardName</key>
 		<string>LaunchScreen</string>
 		<key>UIMainStoryboardFile</key>

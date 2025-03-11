@@ -25,9 +25,4 @@ final onboardingContents = [
           'Explore a world of possibilities with support for a wide range of languages. Speak freely and connect globally.',
       image: sOnboarding3,
       title: 'Multiple Languages: Communicate'),
-  OnboardingContent(
-      description:
-          'VoiceTranslate instantly translates your conversations and audio into the language you need.',
-      image: sOnboarding4,
-      title: 'Unlock Unlimited: Explore Languages'),
 ];

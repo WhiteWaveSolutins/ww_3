@@ -62,44 +62,7 @@ class _SettingsViewState extends State<TranslatorSettingsScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        height: kAppSize(context).height * 0.09,
-                        margin: EdgeInsets.only(top: verticalPadding),
-                        padding:
-                            EdgeInsets.symmetric(horizontal: horizontalPadding),
-                        decoration: BoxDecoration(
-                            borderRadius:
-                                BorderRadius.circular(bigBorderRadius),
-                            gradient: kPrimaryGradient),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Get free trial for a week',
-                              style: context.bodyMedium
-                                  .copyWith(color: kTextColorDarkMode),
-                            ),
-                            CupertinoButton(
-                                padding: EdgeInsets.zero,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 5, vertical: 2),
-                                  decoration: BoxDecoration(
-                                    color: kTextColorDarkMode,
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-                                  child: Text(
-                                    'Upgrade',
-                                    style: context.bodyMedium
-                                        .copyWith(color: kPrimaryColor1),
-                                  ),
-                                ),
-                                onPressed: () {})
-                          ],
-                        ),
-                      ),
-                      const VerticalSpacer(space: 40),
+                      const SizedBox(height: 35),
                       const Text('About App'),
                       Container(
                         padding: const EdgeInsets.symmetric(
