@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_app_info/flutter_app_info.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
 
@@ -13,18 +14,18 @@ Future<void> main() async {
   );
   await AppServiceLocator.initialize();
 
-  Future.wait([
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-    ]),
-  ]).then(
-    (value) {
-      runApp(
-        MultiProvider(
-          providers: [...appProviders],
-          child: const MyApp(),
-        ),
-      );
-    },
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+
+  runApp(
+    AppInfo(
+      data: await AppInfoData.get(),
+      child: MultiProvider(
+        providers: [...appProviders],
+        child: const MyApp(),
+      ),
+    ),
   );
 }

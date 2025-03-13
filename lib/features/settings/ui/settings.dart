@@ -1,6 +1,11 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_app_info/flutter_app_info.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:provider/provider.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../../shared/utils/assets.dart';
 import '../../../shared/utils/size_utils.dart';
@@ -29,7 +34,53 @@ class _SettingsViewState extends State<TranslatorSettingsScreen> {
     super.initState();
   }
 
+  Future<void> _rate() async {
+    final InAppReview inAppReview = InAppReview.instance;
+
+    if (await inAppReview.isAvailable()) {
+      await inAppReview.requestReview();
+    }
+  }
+
   bool isSwitched = false;
+
+
+  void _showLinkModalPopUp(String link) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) => CupertinoPopupSurface(
+        child: Container(
+          height: MediaQuery.of(context).size.height * 0.9,
+          color: Colors.white,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              CupertinoButton(
+                padding: const EdgeInsets.only(right: 16),
+                onPressed: Navigator.of(context).pop,
+                child: const Text(
+                  'Close',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: CupertinoColors.activeBlue,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: WebViewWidget(
+                  controller: WebViewController()
+                    ..loadRequest(
+                      Uri.parse(link),
+                    ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -63,25 +114,25 @@ class _SettingsViewState extends State<TranslatorSettingsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 35),
-                      const Text('About App'),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: horizontalPadding, vertical: 4),
-                        margin:
-                            const EdgeInsets.only(top: smallVerticalPadding),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(24),
-                          color: kSecondaryFade1.withValues(alpha: .1),
-                        ),
-                        child: SettingsText(
-                          text: 'Privacy Policy and terms of use',
-                          onTap: () {
-                            Navigator.restorablePushNamed(
-                                context, PrivacyPolicyScreen.routeName);
-                          },
-                        ),
-                      ),
-                      const VerticalSpacer(space: 40),
+                      // const Text('About App'),
+                      // Container(
+                      //   padding: const EdgeInsets.symmetric(
+                      //       horizontal: horizontalPadding, vertical: 4),
+                      //   margin:
+                      //       const EdgeInsets.only(top: smallVerticalPadding),
+                      //   decoration: BoxDecoration(
+                      //     borderRadius: BorderRadius.circular(24),
+                      //     color: kSecondaryFade1.withValues(alpha: .1),
+                      //   ),
+                      //   child: SettingsText(
+                      //     text: 'Privacy Policy and terms of use',
+                      //     onTap: () {
+                      //       Navigator.restorablePushNamed(
+                      //           context, PrivacyPolicyScreen.routeName);
+                      //     },
+                      //   ),
+                      // ),
+                      // const VerticalSpacer(space: 40),
                       const Text(
                         'The Main Ones',
                       ),
@@ -97,19 +148,49 @@ class _SettingsViewState extends State<TranslatorSettingsScreen> {
                           borderRadius: BorderRadius.circular(24),
                           color: kSecondaryFade1.withValues(alpha: .1),
                         ),
-                        child: const Column(
+                        child: Column(
                           children: [
-                            SettingsText(
-                              text: 'Version',
-                              hasDivider: true,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Version',
+                                  style: context.bodyMedium,
+                                ),
+                                Text(
+                                  '${AppInfo.of(context).package.versionWithoutBuild}',
+                                  style: context.bodyMedium,
+                                ),
+                              ],
                             ),
+                            const AppDivider(),
                             SettingsText(
+                              onTap: () async {
+                                await FlutterEmailSender.send(
+                                  Email(
+                                    recipients: ['elisgrop@outlook.com'],
+                                    subject: 'Message to support',
+                                    body: 'Your feedback',
+                                  ),
+                                );
+                              },
                               text: 'Support',
                               hasDivider: true,
                             ),
                             SettingsText(
-                              text: 'Share App',
+                              onTap: _rate,
+                              text: 'Rate App',
                               hasDivider: true,
+                            ),
+                            SettingsText(
+                              onTap: () => _showLinkModalPopUp('https://www.freeprivacypolicy.com/live/6eb3b6d3-c82a-44a7-88b1-d27a2fd6055b'),
+                              text: 'Terms of Use',
+                              hasDivider: true,
+                            ),
+                            SettingsText(
+                              onTap: () => _showLinkModalPopUp('https://www.freeprivacypolicy.com/live/a2d6d5ca-4ffb-4422-aa0e-c95ae78e9987'),
+                              text: 'Privacy Policy',
+                              hasDivider: false,
                             ),
                           ],
                         ),
@@ -161,6 +242,7 @@ class _SettingsViewState extends State<TranslatorSettingsScreen> {
         ),
       ),
     );
+
   }
 
   void goToLogin() {
@@ -174,6 +256,7 @@ class HeaderText extends StatelessWidget {
     super.key,
     required this.text,
   });
+
   final String text;
 
   @override
@@ -194,6 +277,7 @@ class AppBackButton extends StatelessWidget {
     this.color,
     this.onPressed,
   });
+
   final Color? color;
   final VoidCallback? onPressed;
 
@@ -216,9 +300,11 @@ class SettingsText extends StatelessWidget {
     this.onTap,
     this.hasDivider = false,
   });
+
   final String text;
   final void Function()? onTap;
   final bool? hasDivider;
+
   @override
   Widget build(BuildContext context) {
     return CupertinoButton(

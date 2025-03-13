@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
+import '../../../core/helpers/url_helper.dart';
 import '../../../shared/utils/size_utils.dart';
 import '../../../shared/utils/text_theme.dart';
 import '../../../shared/utils/theme.dart';
@@ -250,25 +253,62 @@ class PrivacyPolicyWidgets extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    void _showLinkModalPopUp(String link) {
+      showCupertinoModalPopup(
+        context: context,
+        builder: (context) => CupertinoPopupSurface(
+          child: Container(
+            height: MediaQuery.of(context).size.height * 0.9,
+            color: Colors.white,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                CupertinoButton(
+                  padding: const EdgeInsets.only(right: 16),
+                  onPressed: Navigator.of(context).pop,
+                  child: const Text(
+                    'Close',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: CupertinoColors.activeBlue,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: WebViewWidget(
+                    controller: WebViewController()
+                      ..loadRequest(
+                        Uri.parse(link),
+                      ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
     return Opacity(
       opacity: 0.7,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SplashActions(
-            onTap: () {},
+            onTap: () => _showLinkModalPopUp('https://www.freeprivacypolicy.com/live/6eb3b6d3-c82a-44a7-88b1-d27a2fd6055b'),
             text: 'Terms of Use',
           ),
           const HorizontalSpacer(),
           SplashActions(
-            onTap: () {},
+            onTap: () => _showLinkModalPopUp('https://www.freeprivacypolicy.com/live/a2d6d5ca-4ffb-4422-aa0e-c95ae78e9987'),
             text: 'Privacy Policy',
           ),
-          const HorizontalSpacer(),
-          SplashActions(
-            onTap: () {},
-            text: 'Restore',
-          ),
+          // const HorizontalSpacer(),
+          // SplashActions(
+          //   onTap: () {},
+          //   text: 'Restore',
+          // ),
         ],
       ),
     );

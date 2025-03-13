@@ -4,7 +4,7 @@ description: "An AI Translator App"
 # Prevent accidental publishing to pub.dev.
 publish_to: 'none'
 
-version: 1.0.8+11
+version: 1.0.8+12
 
 environment:
   sdk: ^3.5.4
@@ -42,6 +42,11 @@ dependencies:
   socket_io_client: ^1.0.2
   speech_to_text: ^7.0.0
   flutter_native_splash: ^2.4.4
+  url_launcher: ^6.3.1
+  webview_flutter: ^4.10.0
+  in_app_review: ^2.0.10
+  flutter_email_sender: ^7.0.0
+  flutter_app_info: ^3.0.3
   
 
 dev_dependencies:
