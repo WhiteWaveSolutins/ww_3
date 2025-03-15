@@ -6,6 +6,7 @@ import '../../features/main/presentation/ui/history.dart';
 import '../../features/main/presentation/ui/main.dart';
 import '../../features/onboarding/onboarding/onboarding.dart';
 import '../../features/settings/ui/settings.dart';
+import '../../features/subscription/presentation/main_paywall/main_paywall_screen.dart';
 import '../../features/terms/privacy_policy.dart';
 import '../../features/translate/ui/image_translate.dart';
 import '../../features/translate/ui/record.dart';
@@ -25,6 +26,8 @@ MaterialPageRoute<void> routeConfig(
           return const OnboardingScreen();
         case MainScreen.routeName:
           return const MainScreen();
+        case MainPaywallScreen.routeName:
+          return const MainPaywallScreen();
         case TranslatorSettingsScreen.routeName:
           return const TranslatorSettingsScreen();
         case PrivacyPolicyScreen.routeName:

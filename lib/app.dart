@@ -16,6 +16,11 @@ class MyApp extends StatelessWidget {
       listenable: userSettingsController,
       builder: (BuildContext context, Widget? child) {
         return CupertinoApp(
+          localizationsDelegates: const [
+            DefaultMaterialLocalizations.delegate,
+            DefaultCupertinoLocalizations.delegate,
+            DefaultWidgetsLocalizations.delegate,
+          ],
           debugShowCheckedModeBanner: false,
           restorationScopeId: 'app',
           theme: translatorLightTheme,

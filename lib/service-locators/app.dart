@@ -5,6 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../core/network/api_client.dart';
 import '../core/network/token.dart';
 import '../core/observer/observer.dart';
+import '../core/services/flag_smith_service.dart';
+import '../core/services/subscription_service.dart';
 import 'authentication.dart';
 import 'history/history.dart';
 import 'settings/settings.dart';
@@ -18,6 +20,15 @@ ApiClient get apiClient => serviceLocator<ApiClient>();
 class AppServiceLocator {
   static Future<void> initialize() async {
     final prefs = await SharedPreferences.getInstance();
+
+    serviceLocator.registerSingletonAsync<FlagSmithService>(
+            () => FlagSmithService().init());
+    await serviceLocator.isReady<FlagSmithService>();
+
+    serviceLocator.registerSingletonAsync<SubscriptionService>(
+            () => SubscriptionService().init());
+    await serviceLocator.isReady<SubscriptionService>();
+
     serviceLocator.registerLazySingleton<SharedPreferences>(() => prefs);
     serviceLocator.registerLazySingleton<TranslatorRouteObserver>(
         () => TranslatorRouteObserver());
@@ -29,6 +40,8 @@ class AppServiceLocator {
     await TranslatorServiceLocator.initialize();
     await HistoryServiceLocator.initialize();
     await userSettingsController.loadSettings();
+
+
 
     Future.delayed(
       const Duration(milliseconds: 1500),

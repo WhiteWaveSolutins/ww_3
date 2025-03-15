@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+import 'package:string_validator/string_validator.dart';
 
 import '../../../../shared/utils/assets.dart';
 import '../../../../shared/utils/size_utils.dart';
@@ -10,6 +11,8 @@ import '../../../../shared/widgets/bottom_sheet.dart';
 import '../../../../shared/widgets/buttons.dart';
 import '../../../../shared/widgets/textfields.dart';
 import '../../../main/presentation/ui/widgets/widgets.dart';
+import '../../../subscription/cubit/subscription_cubit.dart';
+import '../../../subscription/presentation/main_paywall/main_paywall_screen.dart';
 import '../../logic/viewmodel.dart';
 
 class ActionButton extends StatelessWidget {
@@ -18,8 +21,10 @@ class ActionButton extends StatelessWidget {
     this.onPressed,
     required this.icon,
   });
+
   final VoidCallback? onPressed;
   final IconData icon;
+
   @override
   Widget build(BuildContext context) {
     return CupertinoButton(
@@ -45,44 +50,45 @@ class SwapWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<RecordingViewModel>(
-      builder: (context, value, child) => Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          MainActionButton(
-            language: value.inputLang['name']!,
-            icon: value.inputLang['flag'],
-            onPressed: () {
-              showLanguagePicker(
-                context,
-                value,
-                isInput: true,
-              );
-            },
+      builder: (context, value, child) =>
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              MainActionButton(
+                language: value.inputLang['name']!,
+                icon: value.inputLang['flag'],
+                onPressed: () {
+                  showLanguagePicker(
+                    context,
+                    value,
+                    isInput: true,
+                  );
+                },
+              ),
+              SwapIcon(
+                onPressed: () {
+                  final outputLang = value.inputLang;
+                  final inptLang = value.outputLang;
+                  value.setInputLanguage(inptLang);
+                  value.setOutputLanguage(outputLang);
+                  value.resetTranslation();
+                },
+              ),
+              MainActionButton(
+                language: value.outputLang['name']!,
+                icon: value.outputLang['flag'],
+                onPressed: () {
+                  showLanguagePicker(context, value);
+                },
+              ),
+            ],
           ),
-          SwapIcon(
-            onPressed: () {
-              final outputLang = value.inputLang;
-              final inptLang = value.outputLang;
-              value.setInputLanguage(inptLang);
-              value.setOutputLanguage(outputLang);
-              value.resetTranslation();
-            },
-          ),
-          MainActionButton(
-            language: value.outputLang['name']!,
-            icon: value.outputLang['flag'],
-            onPressed: () {
-              showLanguagePicker(context, value);
-            },
-          ),
-        ],
-      ),
     );
   }
 
-  Future<dynamic> showLanguagePicker(
-      BuildContext context, RecordingViewModel value,
+  Future<dynamic> showLanguagePicker(BuildContext context,
+      RecordingViewModel value,
       {bool? isInput = false}) {
     return showAppBottomSheet(
       context,
@@ -91,21 +97,36 @@ class SwapWidget extends StatelessWidget {
         padding: EdgeInsets.only(top: bigPadding),
         child: Column(
           children: value.languages.map(
-            (language) {
+                (language) {
               return CupertinoButton(
                 padding: EdgeInsets.zero,
                 onPressed: () {
-                  if (isInput!) {
-                    value.setInputLanguage(language);
+                  if (context
+                      .read<SubscriptionCubit>()
+                      .state
+                      .hasPremium ||
+                      !language['isPremium']!.toBoolean()) {
+                    if (isInput!) {
+                      value.setInputLanguage(language);
+                    } else {
+                      value.setOutputLanguage(language);
+                    }
+                    value.resetTranslation();
+                    Navigator.pop(
+                        context);
                   } else {
-                    value.setOutputLanguage(language);
-                  }
-                  value.resetTranslation();
-                  Navigator.pop(context); // Close the bottom sheet
+                    Navigator.push(
+                      context,
+                      CupertinoPageRoute(
+                        builder: (_) => const MainPaywallScreen(),
+                      ),
+                    );
+                  } // Close the bottom sheet
                 },
+
                 child: Container(
-                  padding: EdgeInsets.all(verticalPadding),
-                  margin: EdgeInsets.only(bottom: verticalPadding),
+                  padding: const EdgeInsets.all(verticalPadding),
+                  margin: const EdgeInsets.only(bottom: verticalPadding),
                   decoration: BoxDecoration(
                       color: kTabFade1.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(bigBorderRadius)),
@@ -119,42 +140,51 @@ class SwapWidget extends StatelessWidget {
                           Text(language['name']!),
                         ],
                       ),
-                      CupertinoButton(
-                        onPressed: () {
-                          if (isInput!) {
-                            value.setInputLanguage(language);
-                          } else {
-                            value.setOutputLanguage(language);
-                          }
-                          value.resetTranslation();
-                          Navigator.pop(context); // Close the bottom sheet
-                        },
-                        padding: EdgeInsets.zero,
-                        child: Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                color: kTabFade2,
-                              ),
-                              shape: BoxShape.circle),
-                          child: Container(
-                            height: 25,
-                            width: 25,
-                            decoration: BoxDecoration(
-                              gradient:
-                                  (value.fromLanguage == language['code']! ||
-                                          value.translatedLanguage ==
-                                              language['code']!)
-                                      ? kPrimaryGradient
-                                      : const LinearGradient(colors: [
-                                          CupertinoColors.transparent,
-                                          CupertinoColors.transparent
-                                        ]),
-                              shape: BoxShape.circle,
+                      (context
+                          .read<SubscriptionCubit>()
+                          .state
+                          .hasPremium ||
+                          !language['isPremium']!.toBoolean())
+                          ? Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                              color: kTabFade2,
                             ),
+                            shape: BoxShape.circle),
+                        child: Container(
+                          height: 25,
+                          width: 25,
+                          decoration: BoxDecoration(
+                            gradient: (value.fromLanguage ==
+                                language['code']! ||
+                                value.translatedLanguage ==
+                                    language['code']!)
+                                ? kPrimaryGradient
+                                : const LinearGradient(colors: [
+                              CupertinoColors.transparent,
+                              CupertinoColors.transparent
+                            ]),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ) : Container(
+                        padding:
+                        const EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF3DB6A0),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: const  Text(
+                          'Pro',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       )
+
                     ],
                   ),
                 ),
@@ -172,6 +202,7 @@ class SwapIcon extends StatelessWidget {
     super.key,
     this.onPressed,
   });
+
   final void Function()? onPressed;
 
   @override
@@ -186,6 +217,7 @@ class SwapIcon extends StatelessWidget {
 class FadingTextWidget extends StatefulWidget {
   final String text;
   final TextStyle? textStyle;
+
   const FadingTextWidget({super.key, required this.text, this.textStyle});
 
   @override
@@ -235,11 +267,11 @@ class _FadingTextWidgetState extends State<FadingTextWidget>
 }
 
 class RippleEffectButton extends StatefulWidget {
-  const RippleEffectButton(
-      {super.key,
-      required this.isTranslating,
-      required this.isRecording,
-      required this.onPressed});
+  const RippleEffectButton({super.key,
+    required this.isTranslating,
+    required this.isRecording,
+    required this.onPressed});
+
   final bool isTranslating, isRecording;
   final VoidCallback onPressed;
 
@@ -257,7 +289,8 @@ class _RippleEffectButtonState extends State<RippleEffectButton>
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
-    )..repeat();
+    )
+      ..repeat();
   }
 
   @override
@@ -301,20 +334,20 @@ class _RippleEffectButtonState extends State<RippleEffectButton>
             hasGradient: true,
             child: !widget.isTranslating
                 ? Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: SvgPicture.asset(
-                      sMic,
-                      colorFilter: const ColorFilter.mode(
-                          kSecondaryFade1, BlendMode.srcIn),
-                    ),
-                  )
+              padding: const EdgeInsets.all(10.0),
+              child: SvgPicture.asset(
+                sMic,
+                colorFilter: const ColorFilter.mode(
+                    kSecondaryFade1, BlendMode.srcIn),
+              ),
+            )
                 : const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: kBackgroundColor,
-                    ),
-                  ),
+              padding: EdgeInsets.all(8.0),
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: kBackgroundColor,
+              ),
+            ),
           )
         ],
       ),

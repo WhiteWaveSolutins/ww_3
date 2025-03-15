@@ -12,6 +12,7 @@ import '../../../../shared/widgets/drop_down.dart';
 import '../../../../shared/widgets/scaffold.dart';
 import '../../../../shared/widgets/textfields.dart';
 import '../../../settings/ui/settings.dart';
+import '../../../subscription/cubit/subscription_cubit.dart';
 import '../../../translate/logic/viewmodel.dart';
 import '../../../translate/ui/image_translate.dart';
 import '../../../translate/ui/record.dart';
@@ -34,6 +35,8 @@ class _SettingsViewState extends State<MainScreen> {
   void initState() {
     context.read<RecordingViewModel>().initializeSpeech();
     context.read<HistoryViewmodel>().getHistoryItem();
+    context.read<SubscriptionCubit>().checkHasPremiumAccess();
+
     super.initState();
   }
 

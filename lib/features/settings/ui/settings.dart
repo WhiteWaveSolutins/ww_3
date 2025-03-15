@@ -17,6 +17,8 @@ import '../../../shared/widgets/scaffold.dart';
 import '../../../shared/widgets/textfields.dart';
 import '../../authentication/presentation/viewmodel/authentication_viewmodel.dart';
 import '../../onboarding/onboarding/onboarding.dart';
+import '../../subscription/cubit/subscription_cubit.dart';
+import '../../subscription/presentation/main_paywall/main_paywall_screen.dart';
 import '../../terms/privacy_policy.dart';
 
 class TranslatorSettingsScreen extends StatefulWidget {
@@ -43,7 +45,6 @@ class _SettingsViewState extends State<TranslatorSettingsScreen> {
   }
 
   bool isSwitched = false;
-
 
   void _showLinkModalPopUp(String link) {
     showCupertinoModalPopup(
@@ -81,7 +82,6 @@ class _SettingsViewState extends State<TranslatorSettingsScreen> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Consumer<AuthenticationViewModel>(
@@ -113,26 +113,56 @@ class _SettingsViewState extends State<TranslatorSettingsScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      if (!context.read<SubscriptionCubit>().state.hasPremium)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 15.0),
+                          child: Container(
+                            height: kAppSize(context).height * 0.09,
+                            margin: const EdgeInsets.only(top: verticalPadding),
+                            padding:const  EdgeInsets.symmetric(
+                                horizontal: horizontalPadding),
+                            decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.circular(bigBorderRadius),
+                                gradient: kPrimaryGradient),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Get free trial for a week',
+                                  style: context.bodyMedium
+                                      .copyWith(color: kTextColorDarkMode),
+                                ),
+                                CupertinoButton(
+                                  padding: EdgeInsets.zero,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 5, vertical: 2),
+                                    decoration: BoxDecoration(
+                                      color: kTextColorDarkMode,
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    child: Text(
+                                      'Upgrade',
+                                      style: context.bodyMedium
+                                          .copyWith(color: kPrimaryColor1),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      CupertinoPageRoute(
+                                        builder: (_) => const MainPaywallScreen(),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       const SizedBox(height: 35),
-                      // const Text('About App'),
-                      // Container(
-                      //   padding: const EdgeInsets.symmetric(
-                      //       horizontal: horizontalPadding, vertical: 4),
-                      //   margin:
-                      //       const EdgeInsets.only(top: smallVerticalPadding),
-                      //   decoration: BoxDecoration(
-                      //     borderRadius: BorderRadius.circular(24),
-                      //     color: kSecondaryFade1.withValues(alpha: .1),
-                      //   ),
-                      //   child: SettingsText(
-                      //     text: 'Privacy Policy and terms of use',
-                      //     onTap: () {
-                      //       Navigator.restorablePushNamed(
-                      //           context, PrivacyPolicyScreen.routeName);
-                      //     },
-                      //   ),
-                      // ),
-                      // const VerticalSpacer(space: 40),
                       const Text(
                         'The Main Ones',
                       ),
@@ -183,12 +213,14 @@ class _SettingsViewState extends State<TranslatorSettingsScreen> {
                               hasDivider: true,
                             ),
                             SettingsText(
-                              onTap: () => _showLinkModalPopUp('https://www.freeprivacypolicy.com/live/6eb3b6d3-c82a-44a7-88b1-d27a2fd6055b'),
+                              onTap: () => _showLinkModalPopUp(
+                                  'https://www.freeprivacypolicy.com/live/6eb3b6d3-c82a-44a7-88b1-d27a2fd6055b'),
                               text: 'Terms of Use',
                               hasDivider: true,
                             ),
                             SettingsText(
-                              onTap: () => _showLinkModalPopUp('https://www.freeprivacypolicy.com/live/a2d6d5ca-4ffb-4422-aa0e-c95ae78e9987'),
+                              onTap: () => _showLinkModalPopUp(
+                                  'https://www.freeprivacypolicy.com/live/a2d6d5ca-4ffb-4422-aa0e-c95ae78e9987'),
                               text: 'Privacy Policy',
                               hasDivider: false,
                             ),
@@ -242,7 +274,6 @@ class _SettingsViewState extends State<TranslatorSettingsScreen> {
         ),
       ),
     );
-
   }
 
   void goToLogin() {

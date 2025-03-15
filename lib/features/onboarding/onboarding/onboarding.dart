@@ -13,6 +13,8 @@ import '../../../shared/widgets/scaffold.dart';
 import '../../../shared/widgets/textfields.dart';
 import '../../authentication/presentation/viewmodel/authentication_viewmodel.dart';
 import '../../main/presentation/ui/main.dart';
+import '../../subscription/cubit/subscription_cubit.dart';
+import '../../subscription/presentation/onboarding_paywall/bloc/onboarding_paywall_bloc.dart';
 import 'content.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -86,11 +88,14 @@ class _SettingsViewState extends State<OnboardingScreen>
                                   child: Opacity(
                                     opacity: 0.8,
                                     child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           onboardingContents[index].title,
                                           style: context.headlineLarge.bold,
                                         ),
+                                        const SizedBox(height: 20),
                                         Padding(
                                           padding:
                                               const EdgeInsets.only(right: 50),
@@ -100,10 +105,18 @@ class _SettingsViewState extends State<OnboardingScreen>
                                             style: context.bodySmall,
                                           ),
                                         ),
+                                        if (_currentIndex == 3) CupertinoButton(
+                                          padding: EdgeInsets.zero,
+                                          onPressed: moveToMainScreen,
+                                          child: Text(
+                                            'Or proceed with limited version',
+                                            style: context.bodySmall,
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ),
-                                )
+                                ),
                               ],
                             ),
                             if (_currentIndex < 1)
@@ -144,9 +157,9 @@ class _SettingsViewState extends State<OnboardingScreen>
                                 child: TranslatorPrimaryButton(
                                   size: double.infinity,
                                   opacity: value.isLoading ? 0.5 : 1,
-                                  title: _currentIndex < 2
+                                  title: _currentIndex < 3
                                       ? 'Next'
-                                      : 'Get started',
+                                      : 'Try Free & Subscribe',
                                   onPressed: !value.isLoading
                                       ? () async {
                                           await showNextContents(value,
@@ -177,7 +190,7 @@ class _SettingsViewState extends State<OnboardingScreen>
                             ),
                           ),
                         ),
-                        const PrivacyPolicyWidgets(),
+                        _buildPrivacyPolicyWidgets(context),
                       ],
                     ),
                   ),
@@ -191,17 +204,132 @@ class _SettingsViewState extends State<OnboardingScreen>
     );
   }
 
+  Future<void> _restore() async {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) => const Center(
+        child: CupertinoActivityIndicator(
+          radius: 15,
+        ),
+      ),
+    );
+    await context.read<SubscriptionCubit>().restore(
+      onDone: () {
+        showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (context) => CupertinoAlertDialog(
+            title: const Text("You're all set"),
+            actions: [
+              CupertinoDialogAction(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  moveToMainScreen();
+                },
+                isDefaultAction: true,
+                child: const Text("Ok"),
+              ),
+            ],
+          ),
+        );
+      },
+      onError: () {
+        Navigator.of(context).pop();
+        showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (context) => CupertinoAlertDialog(
+            title: const Text("Something went wrong"),
+            actions: [
+              CupertinoDialogAction(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                isDefaultAction: true,
+                child: const Text("Ok"),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   Future<void> showNextContents(AuthenticationViewModel value,
       {bool? canLogin = false}) async {
-    if (_currentIndex < 2) {
-      _pageController.animateToPage(_currentIndex + 1,
-          duration: const Duration(milliseconds: 400), curve: Curves.linear);
-    } else {
-      if (canLogin!) {
-        await value.login();
-        moveToMainScreen();
-      }
+    switch (_currentIndex) {
+      case 0:
+        _pageController.animateToPage(_currentIndex + 1,
+            duration: const Duration(milliseconds: 400), curve: Curves.linear);
+
+      case 1:
+        _pageController.animateToPage(_currentIndex + 1,
+            duration: const Duration(milliseconds: 400), curve: Curves.linear);
+
+      case 2:
+        context.read<OnboardingPaywallBloc>().add(GetOnboardingPaywallEvent());
+        _pageController.animateToPage(_currentIndex + 1,
+            duration: const Duration(milliseconds: 400), curve: Curves.linear);
+      case 3:
+        _makeOnboardingPurchase(
+            context.read<OnboardingPaywallBloc>().state.product!.productId);
     }
+
+  }
+
+  Future<void> _makeOnboardingPurchase(String productId) async {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) => const Center(
+        child: CupertinoActivityIndicator(
+          radius: 15,
+        ),
+      ),
+    );
+
+    await context.read<SubscriptionCubit>().makePurchase(
+      productId,
+      onDone: () {
+        showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (context) => CupertinoAlertDialog(
+            title: const Text("You're all set"),
+            actions: [
+              CupertinoDialogAction(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  moveToMainScreen();
+                },
+                isDefaultAction: true,
+                child: const Text("Ok"),
+              ),
+            ],
+          ),
+        );
+      },
+      onError: () {
+        Navigator.of(context).pop();
+        showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (context) => CupertinoAlertDialog(
+            title: const Text("Something went wrong"),
+            actions: [
+              CupertinoDialogAction(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                isDefaultAction: true,
+                child: const Text("Ok"),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Future<void> moveToMainScreen(
@@ -217,6 +345,69 @@ class _SettingsViewState extends State<OnboardingScreen>
       await value!.login();
     }
   }
+
+  void _showLinkModalPopUp(String link) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) => CupertinoPopupSurface(
+        child: Container(
+          height: MediaQuery.of(context).size.height * 0.9,
+          color: Colors.white,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              CupertinoButton(
+                padding: const EdgeInsets.only(right: 16),
+                onPressed: Navigator.of(context).pop,
+                child: const Text(
+                  'Close',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: CupertinoColors.activeBlue,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: WebViewWidget(
+                  controller: WebViewController()
+                    ..loadRequest(
+                      Uri.parse(link),
+                    ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPrivacyPolicyWidgets(BuildContext context) {
+    return Opacity(
+      opacity: 0.7,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SplashActions(
+            onTap: () => _showLinkModalPopUp(
+                'https://www.freeprivacypolicy.com/live/6eb3b6d3-c82a-44a7-88b1-d27a2fd6055b'),
+            text: 'Terms of Use',
+          ),
+          const HorizontalSpacer(),
+          SplashActions(
+            onTap: () => _showLinkModalPopUp(
+                'https://www.freeprivacypolicy.com/live/a2d6d5ca-4ffb-4422-aa0e-c95ae78e9987'),
+            text: 'Privacy Policy',
+          ),
+          const HorizontalSpacer(),
+          SplashActions(
+            onTap: _restore,
+            text: 'Restore',
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class BuildDotWidget extends StatelessWidget {
@@ -225,6 +416,7 @@ class BuildDotWidget extends StatelessWidget {
     required this.index,
     required this.currentIndex,
   });
+
   final int index, currentIndex;
 
   @override
@@ -241,75 +433,6 @@ class BuildDotWidget extends StatelessWidget {
               ? null
               : kPrimaryColor1.withValues(alpha: .3),
         ),
-      ),
-    );
-  }
-}
-
-class PrivacyPolicyWidgets extends StatelessWidget {
-  const PrivacyPolicyWidgets({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-
-    void _showLinkModalPopUp(String link) {
-      showCupertinoModalPopup(
-        context: context,
-        builder: (context) => CupertinoPopupSurface(
-          child: Container(
-            height: MediaQuery.of(context).size.height * 0.9,
-            color: Colors.white,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                CupertinoButton(
-                  padding: const EdgeInsets.only(right: 16),
-                  onPressed: Navigator.of(context).pop,
-                  child: const Text(
-                    'Close',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: CupertinoColors.activeBlue,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: WebViewWidget(
-                    controller: WebViewController()
-                      ..loadRequest(
-                        Uri.parse(link),
-                      ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    }
-
-    return Opacity(
-      opacity: 0.7,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SplashActions(
-            onTap: () => _showLinkModalPopUp('https://www.freeprivacypolicy.com/live/6eb3b6d3-c82a-44a7-88b1-d27a2fd6055b'),
-            text: 'Terms of Use',
-          ),
-          const HorizontalSpacer(),
-          SplashActions(
-            onTap: () => _showLinkModalPopUp('https://www.freeprivacypolicy.com/live/a2d6d5ca-4ffb-4422-aa0e-c95ae78e9987'),
-            text: 'Privacy Policy',
-          ),
-          // const HorizontalSpacer(),
-          // SplashActions(
-          //   onTap: () {},
-          //   text: 'Restore',
-          // ),
-        ],
       ),
     );
   }

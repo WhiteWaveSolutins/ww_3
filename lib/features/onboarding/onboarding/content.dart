@@ -12,17 +12,22 @@ class OnboardingContent {
 final onboardingContents = [
   OnboardingContent(
       description:
-          'VoiceTranslate instantly translates your conversations and audio into the language you need.',
+      'VoiceTranslate instantly translates your conversations and audio into the language you need.',
       image: sOnboarding1,
       title: 'Welcome to VoiceTranslate Clear!'),
   OnboardingContent(
       description:
-          'Get accurate translations instantly. Perfect for travel, business, and connecting with new people.',
+      'Get accurate translations instantly. Perfect for travel, business, and connecting with new people.',
       image: sOnboarding2,
       title: 'Real-Time Translation: Speak and Understand'),
   OnboardingContent(
       description:
-          'Explore a world of possibilities with support for a wide range of languages. Speak freely and connect globally.',
+      'Explore a world of possibilities with support for a wide range of languages. Speak freely and connect globally.',
       image: sOnboarding3,
       title: 'Multiple Languages: Communicate'),
+  OnboardingContent(
+      description:
+      'Join us now and improve your productivity with our app! Try 3 days free, Then \$4.99/week',
+      image: sOnboarding4,
+      title: 'Unlock Unlimited: Explore Languages'),
 ];

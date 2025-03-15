@@ -13,6 +13,7 @@ import '../../../../../shared/widgets/buttons.dart';
 import '../../../../../shared/widgets/drop_down.dart';
 import '../../../../../shared/widgets/textfields.dart';
 import '../../../../settings/ui/settings.dart';
+import '../../../../subscription/cubit/subscription_cubit.dart';
 import '../../../../translate/logic/viewmodel.dart';
 import '../../../data/model.dart';
 import '../../viewmodel/history_viewmodel.dart';
@@ -27,6 +28,7 @@ class SettingsButton extends StatelessWidget {
     return CupertinoButton(
       padding: EdgeInsets.zero,
       onPressed: () {
+        context.read<SubscriptionCubit>().checkHasPremiumAccess();
         Navigator.push(
           context,
           CupertinoPageRoute(
@@ -304,9 +306,13 @@ class MainActionButton extends StatelessWidget {
             HorizontalSpacer(
               space: smallHorizontalPadding,
             ),
-            Text(
-              language,
-              style: context.bodySmall.bold,
+            Expanded(
+              child: Text(
+                language,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: context.bodySmall.bold,
+              ),
             ),
           ],
         ),

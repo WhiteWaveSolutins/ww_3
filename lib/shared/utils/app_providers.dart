@@ -8,6 +8,7 @@ import '../../features/translate/logic/viewmodel.dart';
 import '../../service-locators/app.dart';
 
 final appProviders = <SingleChildWidget>[
+
   ChangeNotifierProvider<RecordingViewModel>(
     create: (_) => serviceLocator<RecordingViewModel>(),
   ),
