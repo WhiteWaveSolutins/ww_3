@@ -16,6 +16,7 @@ class MyApp extends StatelessWidget {
       listenable: userSettingsController,
       builder: (BuildContext context, Widget? child) {
         return CupertinoApp(
+          title: 'AI translator - language',
           localizationsDelegates: const [
             DefaultMaterialLocalizations.delegate,
             DefaultCupertinoLocalizations.delegate,
