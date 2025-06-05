@@ -7,9 +7,10 @@ import 'package:flutter/foundation.dart';
 
 import '../../service-locators/app.dart';
 import '../../shared/utils/strings.dart';
+import '../services/mixin/config_mixin.dart';
 import 'exceptions.dart';
 
-class ApiClient {
+class ApiClient with ConfigMixin{
   ApiClient() {
     final options = BaseOptions(
       baseUrl: baseUrl,
@@ -51,7 +52,7 @@ class ApiClient {
   void setAuthCookie() {
     final token = getToken();
     if (token != null) {
-      _dio!.options.headers['Authorization'] = "Bearer $kApiKey";
+      _dio!.options.headers['Authorization'] = "Bearer $aiApiKey";
     }
   }
 

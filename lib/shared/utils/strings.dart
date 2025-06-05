@@ -14,7 +14,6 @@ const String ruble = '₽';
 
 const String kBaseUrl = '';
 const String kApiVersion = 'v1';
-const String kApiKey = '';
 
 const privacyPolicyText =
     '''The prohibited or acceptable use clause in your terms of use agreement outlines all rules your users must follow when accessing your services.

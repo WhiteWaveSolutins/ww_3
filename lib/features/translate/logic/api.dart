@@ -8,10 +8,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../../../core/services/mixin/config_mixin.dart';
 import '../../../models/auth/response/openai.dart';
 import '../../../shared/utils/strings.dart';
 
-class TranslationService {
+class TranslationService with ConfigMixin {
   final Dio _dio = Dio();
 
   Future<void> fetchChatGPTModels(String apiKey) async {
@@ -44,7 +45,7 @@ class TranslationService {
       String text, String targetLanguage) async {
     const url = 'https://api.openai.com/v1/chat/completions';
 
-    debugPrint('These are the requests:::: $kApiKey, $text, $targetLanguage');
+    debugPrint('These are the requests:::: $aiApiKey, $text, $targetLanguage');
 
     try {
       final response = await _dio.post(
@@ -52,7 +53,7 @@ class TranslationService {
         options: Options(
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer $kApiKey',
+            'Authorization': 'Bearer $aiApiKey',
           },
         ),
         data: jsonEncode({
@@ -77,7 +78,7 @@ class TranslationService {
         }
 
         // Proceed with speech generation if `res` is not empty
-        final speech = await _getSpeech(res);
+        final speech = await _getSpeech(res, aiApiKey);
 
         return Right([res, speech]);
       } else {
@@ -96,8 +97,8 @@ class TranslationService {
   }
 }
 
-Future<String> _getSpeech(String text) async {
-  OpenAI.apiKey = kApiKey;
+Future<String> _getSpeech(String text, String aiApiKey) async {
+  OpenAI.apiKey = aiApiKey;
   Directory appDocDirectory = await getApplicationDocumentsDirectory();
 
   try {
